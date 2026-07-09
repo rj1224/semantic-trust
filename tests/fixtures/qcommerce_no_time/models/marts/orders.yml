@@ -1,0 +1,22 @@
+semantic_models:
+  - name: orders
+    model: ref('fct_orders')
+    entities:
+      - name: order_id
+        type: primary
+    dimensions:
+      - name: status
+        type: categorical    # categorical only — no time dimension
+    measures:
+      - name: order_total
+        agg: sum
+        expr: amount
+metrics:
+  - name: qcommerce_total_revenue
+    description: "Sum of all order amounts."
+    type: simple
+    type_params:
+      measure: order_total
+    config:
+      meta:
+        owner: "data-team"

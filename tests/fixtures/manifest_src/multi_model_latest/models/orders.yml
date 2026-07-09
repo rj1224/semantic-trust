@@ -1,0 +1,21 @@
+models:
+  - name: orders
+    semantic_model:
+      enabled: true
+    agg_time_dimension: ordered_at
+    columns:
+      - name: order_id
+        entity: {type: primary, name: order}
+      - name: ordered_at
+        granularity: day
+        dimension: {type: time}
+      - name: order_amount
+        dimension: {type: categorical}
+    metrics:
+      - name: total_order_revenue
+        type: simple
+        label: Total Order Revenue
+        description: "Sum of order amounts."
+        agg: sum
+        expr: order_amount
+        config: {meta: {owner: "data-team"}}

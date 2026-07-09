@@ -1,0 +1,49 @@
+semantic_models:
+  - name: orders
+    model: ref('fct_orders')
+    entities:
+      - name: order_id
+        type: primary
+    dimensions:
+      - name: ordered_at
+        type: time
+        type_params:
+          time_granularity: day
+    measures:
+      - name: order_total
+        agg: sum
+        expr: order_amount
+
+  - name: refunds
+    model: ref('fct_refunds')
+    entities:
+      - name: refund_id
+        type: primary
+    dimensions:
+      - name: refunded_at
+        type: time
+        type_params:
+          time_granularity: day
+    measures:
+      - name: refund_total
+        agg: sum
+        expr: refund_amount
+
+metrics:
+  - name: total_order_revenue
+    description: "Sum of order amounts."
+    type: simple
+    type_params:
+      measure: order_total
+    config:
+      meta:
+        owner: "data-team"
+
+  - name: total_refunds
+    description: "Sum of refund amounts."
+    type: simple
+    type_params:
+      measure: refund_total
+    config:
+      meta:
+        owner: "data-team"

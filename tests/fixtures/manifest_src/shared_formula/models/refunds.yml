@@ -1,0 +1,19 @@
+models:
+  - name: fct_refunds
+    semantic_model:
+      enabled: true
+    agg_time_dimension: refunded_at
+    columns:
+      - name: refund_id
+        entity: {type: primary, name: refund}
+      - name: refunded_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: refunds_revenue
+        type: simple
+        label: Refunds Revenue
+        description: "Sum of all refund amounts."
+        agg: sum
+        expr: amount
+        config: {meta: {owner: "refunds_team"}}

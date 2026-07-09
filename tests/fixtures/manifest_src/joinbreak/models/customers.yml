@@ -1,0 +1,19 @@
+models:
+  - name: fct_customers
+    semantic_model:
+      enabled: true
+    agg_time_dimension: joined_at
+    columns:
+      - name: customer_id
+        entity: {type: primary, name: customer_id}
+      - name: joined_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: customer_count
+        type: simple
+        label: Customer Count
+        description: "Count of customers."
+        agg: count
+        expr: customer_id
+        config: {meta: {owner: "customers_team"}}

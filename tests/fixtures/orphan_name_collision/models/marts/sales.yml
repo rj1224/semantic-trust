@@ -1,0 +1,50 @@
+# Latest spec — orphan (owner_model=None) NAME collision fixture.
+# Two top-level derived metrics share the name `blended_rate`. Both are
+# cross-model (owner_model=None). A name collision among orphans must NOT pass
+# clean-and-silent — build_report must surface it in `warnings`.
+models:
+  - name: fct_orders
+    semantic_model:
+      name: orders
+      entities:
+        - name: order_id
+          type: primary
+      columns:
+        - name: ordered_at
+          semantic_type: time
+          granularity: day
+        - name: amount
+          semantic_type: numeric
+      agg_time_dimension: ordered_at
+      metrics:
+        - name: total_order_amount
+          description: "Sum of order amounts."
+          type: simple
+          agg: sum
+          expr: amount
+          config:
+            meta:
+              owner: "data-team"
+
+metrics:
+  - name: blended_rate
+    description: "Derived metric A."
+    type: derived
+    type_params:
+      expr: "total_order_amount / 2"
+      metrics:
+        - total_order_amount
+    config:
+      meta:
+        owner: "data-team"
+
+  - name: blended_rate
+    description: "Derived metric B — duplicate name, also orphaned."
+    type: derived
+    type_params:
+      expr: "total_order_amount / 3"
+      metrics:
+        - total_order_amount
+    config:
+      meta:
+        owner: "data-team"

@@ -1,0 +1,21 @@
+models:
+  - name: refunds
+    semantic_model:
+      enabled: true
+    agg_time_dimension: refunded_at
+    columns:
+      - name: refund_id
+        entity: {type: primary, name: refund}
+      - name: refunded_at
+        granularity: day
+        dimension: {type: time}
+      - name: refund_amount
+        dimension: {type: categorical}
+    metrics:
+      - name: total_refunds
+        type: simple
+        label: Total Refunds
+        description: "Sum of refund amounts."
+        agg: sum
+        expr: refund_amount
+        config: {meta: {owner: "data-team"}}

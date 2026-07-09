@@ -1,0 +1,19 @@
+models:
+  - name: fct_orders
+    semantic_model:
+      enabled: true
+    agg_time_dimension: ordered_at
+    columns:
+      - name: order_id
+        entity: {type: primary, name: order}
+      - name: ordered_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: orders_revenue
+        type: simple
+        label: Orders Revenue
+        description: "Sum of all order amounts."
+        agg: sum
+        expr: amount
+        config: {meta: {owner: "orders_team"}}

@@ -1,0 +1,21 @@
+semantic_models:
+  - name: orders
+    model: ref('fct_orders')
+    defaults: {agg_time_dimension: ordered_at}
+    entities:
+      - {name: order_id, type: primary}
+    dimensions:
+      - {name: ordered_at, type: time, type_params: {time_granularity: day}}
+      - {name: status, type: categorical}
+    measures:
+      - {name: order_total, agg: sum, expr: amount}
+metrics:
+  - name: qcommerce_total_revenue
+    label: Total Revenue
+    description: "Sum of all order amounts."
+    type: simple
+    type_params: {measure: order_total}
+    config:
+      meta:
+        maturity: "certified"
+        # owner intentionally absent

@@ -1,0 +1,29 @@
+# Latest MetricFlow spec (dbt-core 1.12+): semantic_model nested under models:.
+# type: simple metrics are nested UNDER the model in semantic_model.metrics and
+# carry agg + expr INLINE (no measures: block, no type_params, no measure ref).
+models:
+  - name: fct_orders
+    semantic_model:
+      name: orders
+      entities:
+        - name: order_id
+          type: primary
+      columns:
+        - name: ordered_at
+          semantic_type: time
+          granularity: day
+        - name: status
+          semantic_type: categorical
+        - name: amount
+          semantic_type: numeric
+      agg_time_dimension: ordered_at
+      metrics:
+        - name: qcommerce_total_revenue
+          description: "Sum of all order amounts."
+          type: simple
+          agg: sum
+          expr: amount
+          config:
+            meta:
+              owner: "data-team"
+              maturity: "certified"

@@ -1,0 +1,34 @@
+models:
+  - name: fct_orders
+    semantic_model:
+      enabled: true
+    agg_time_dimension: ordered_at
+    columns:
+      - name: order_id
+        entity: {type: primary, name: order}
+      - name: ordered_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - {name: order_revenue, type: simple, label: Order Revenue, description: d, agg: sum, expr: amount, config: {meta: {owner: team-a}}}
+  - name: fct_refunds
+    semantic_model:
+      enabled: true
+    agg_time_dimension: refunded_at
+    columns:
+      - name: refund_id
+        entity: {type: primary, name: refund}
+      - name: refunded_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - {name: refund_total, type: simple, label: Refund Total, description: d, agg: sum, expr: amount, config: {meta: {owner: team-b}}}
+metrics:
+  - name: net_revenue
+    type: derived
+    label: Net Revenue
+    description: d
+    type_params:
+      expr: order_revenue - refund_total
+      metrics: [{name: order_revenue}, {name: refund_total}]
+    config: {meta: {owner: team-a}}

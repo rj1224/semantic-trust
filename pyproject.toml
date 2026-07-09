@@ -1,0 +1,28 @@
+[project]
+name = "semantic-trust"
+version = "0.1.0"
+description = "Score and certify dbt Semantic Layer models — trust bands, gates, and dbt-parse certification."
+requires-python = ">=3.11"
+dependencies = ["mcp>=1.0"]    # engine reads the compiled dbt manifest (JSON); MCP = the server SDK
+
+# Entry points (AD-1). MCP server is the skill-facing interface (launched via uvx by the plugin);
+# the `semantic-trust` console script is the local dev/testing CLI.
+[project.scripts]
+semantic-trust-mcp = "trust.mcp_server:main"
+semantic-trust = "trust.cli:main_cli"
+
+[project.optional-dependencies]
+# ci: fast CI — pytest + hypothesis + pyyaml (e2e tests render YAML). No dbt tree.
+ci = ["pytest>=8.0", "hypothesis>=6.0", "pyyaml>=6.0"]
+# dev adds the dbt-metricflow bundle for `mf validate-configs` (legacy-only) + latest-spec checks.
+dev = ["pytest>=8.0", "hypothesis>=6.0", "pyyaml>=6.0", "dbt-metricflow>=0.13,<0.14"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["trust*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

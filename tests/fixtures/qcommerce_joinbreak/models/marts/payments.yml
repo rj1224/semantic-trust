@@ -1,0 +1,33 @@
+# Latest MetricFlow spec fixture — qcommerce_joinbreak
+# payments model declares entity 'customer_id' as type:foreign.
+# orders model declares entity 'customer' as type:primary.
+# Names differ (customer vs customer_id) — parity mismatch that [J] must catch.
+# 'order_id' appears on both models with compatible types (foreign here, primary
+# in orders) — so it is NOT orphaned and does NOT trigger a parity issue.
+models:
+  - name: fct_payments
+    semantic_model:
+      name: payments
+      entities:
+        - name: order_id
+          type: foreign
+        - name: customer_id
+          type: foreign
+      columns:
+        - name: paid_at
+          semantic_type: time
+          granularity: day
+        - name: payment_method
+          semantic_type: categorical
+        - name: payment_amount
+          semantic_type: numeric
+      agg_time_dimension: paid_at
+      metrics:
+        - name: qcommerce_joinbreak_total_payments
+          description: "Sum of all payment amounts."
+          type: simple
+          agg: sum
+          expr: payment_amount
+          config:
+            meta:
+              owner: "data-team"

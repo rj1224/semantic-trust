@@ -1,0 +1,32 @@
+# Latest MetricFlow spec fixture — qcommerce_joinbreak
+# orders model declares entity 'customer' as type:primary.
+# payments model declares entity 'customer_id' as type:foreign.
+# These SHOULD join on the customer concept but the entity names differ —
+# this is the discriminating parity-mismatch case for the [J] gate.
+models:
+  - name: fct_orders
+    semantic_model:
+      name: orders
+      entities:
+        - name: order_id
+          type: primary
+        - name: customer
+          type: primary
+      columns:
+        - name: ordered_at
+          semantic_type: time
+          granularity: day
+        - name: status
+          semantic_type: categorical
+        - name: amount
+          semantic_type: numeric
+      agg_time_dimension: ordered_at
+      metrics:
+        - name: qcommerce_joinbreak_total_revenue
+          description: "Sum of all order amounts."
+          type: simple
+          agg: sum
+          expr: amount
+          config:
+            meta:
+              owner: "data-team"

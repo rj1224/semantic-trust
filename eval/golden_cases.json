@@ -1,0 +1,62 @@
+[
+  {
+    "id": "legacy-spec-good",
+    "class": "scoring",
+    "spec": "legacy",
+    "runnable": true,
+    "input_model": "tests/fixtures/manifests/qcommerce_legacy",
+    "model_name": "orders",
+    "expected_band": "A",
+    "expected_gates": {"structural": true, "ownership": true, "completeness": true, "uniqueness": true, "joinability": true},
+    "expected_collision": false,
+    "notes": "Baseline good-path case using legacy MetricFlow spec."
+  },
+  {
+    "id": "latest-spec-good",
+    "class": "scoring",
+    "spec": "latest",
+    "runnable": true,
+    "input_model": "tests/fixtures/manifests/qcommerce_latest",
+    "model_name": "orders",
+    "expected_band": "A",
+    "expected_gates": {"structural": true, "ownership": true, "completeness": true, "uniqueness": true, "joinability": true},
+    "expected_collision": false,
+    "notes": "Good-path case using latest MetricFlow spec (dbt-core 1.12+, no measures: block)."
+  },
+  {
+    "id": "missing-owner",
+    "class": "scoring",
+    "spec": "legacy",
+    "runnable": true,
+    "input_model": "tests/fixtures/manifests/qcommerce_no_owner",
+    "model_name": "orders",
+    "expected_band": "F",
+    "expected_gates": {"structural": true, "ownership": false, "completeness": true, "uniqueness": true, "joinability": true},
+    "expected_collision": false,
+    "notes": "Negative: no config.meta.owner on metric — ownership gate must fail."
+  },
+  {
+    "id": "dup-formula",
+    "class": "uniqueness",
+    "spec": "legacy",
+    "runnable": true,
+    "input_model": "tests/fixtures/manifests/qcommerce_dup",
+    "model_name": "orders",
+    "expected_band": "F",
+    "expected_gates": {"structural": true, "ownership": true, "completeness": true, "uniqueness": false, "joinability": true},
+    "expected_collision": true,
+    "notes": "Negative: two metrics share identical normalized formula — uniqueness gate must fail."
+  },
+  {
+    "id": "no-time-dimension",
+    "class": "scoring",
+    "spec": "legacy",
+    "runnable": true,
+    "input_model": "tests/fixtures/manifests/qcommerce_no_time",
+    "model_name": "orders",
+    "expected_band": "F",
+    "expected_gates": {"structural": false, "ownership": true, "completeness": true, "uniqueness": true, "joinability": true},
+    "expected_collision": false,
+    "notes": "Negative: missing primary time dimension — structural gate must fail. Maps to dbt failure catalog: 'missing primary time dimension'."
+  }
+]

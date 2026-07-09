@@ -1,0 +1,81 @@
+models:
+  - name: fct_orders
+    semantic_model:
+      enabled: true
+    agg_time_dimension: ordered_at
+    columns:
+      - name: order_id
+        entity: {type: primary, name: order}
+      - name: ordered_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: order_total
+        type: simple
+        label: Order Total
+        description: Sum of order amounts
+        agg: sum
+        expr: amount
+        config: {meta: {owner: team-a}}
+      - name: order_count
+        type: simple
+        label: Order Count
+        description: Count of orders
+        agg: count
+        expr: order_id
+        config: {meta: {owner: team-a}}
+      - name: refund_total
+        type: simple
+        label: Refund Total
+        description: Sum of refund amounts
+        agg: sum
+        expr: refund_amount
+        config: {meta: {owner: team-a}}
+
+metrics:
+  - name: avg_order_value
+    type: ratio
+    label: Average Order Value
+    description: Revenue per order
+    type_params:
+      numerator: order_total
+      denominator: order_count
+    config: {meta: {owner: team-a}}
+
+  - name: net_margin
+    type: derived
+    label: Net Margin
+    description: Order total minus refunds
+    type_params:
+      expr: order_total - refund_total
+      metrics:
+        - name: order_total
+        - name: refund_total
+    config: {meta: {owner: team-a}}
+
+  - name: net_margin_copy
+    type: derived
+    label: Net Margin Copy
+    description: Identical to net_margin — should collide
+    type_params:
+      expr: order_total - refund_total
+      metrics:
+        - name: order_total
+        - name: refund_total
+    config: {meta: {owner: team-a}}
+
+  - name: cumulative_revenue_3d
+    type: cumulative
+    label: Cumulative Revenue 3d
+    description: Cumulative revenue over 3 days
+    window: 3 days
+    input_metric: order_total
+    config: {meta: {owner: team-a}}
+
+  - name: cumulative_revenue_7d
+    type: cumulative
+    label: Cumulative Revenue 7d
+    description: Cumulative revenue over 7 days
+    window: 7 days
+    input_metric: order_total
+    config: {meta: {owner: team-a}}

@@ -1,0 +1,70 @@
+# Legacy MetricFlow spec — shared-measure-name ambiguity fixture.
+# Two semantic models BOTH define a measure named `revenue` (legal in legacy
+# spec, real ambiguity). Each model ALSO defines a uniquely-named measure that
+# its own metric references, so per-metric ownership resolves deterministically.
+# The shared `revenue` name exercises the documented first-match behavior in the
+# measure->SM lookup (orders wins, since it is declared first).
+semantic_models:
+  - name: orders
+    model: ref('fct_orders')
+    entities:
+      - name: order_id
+        type: primary
+    dimensions:
+      - name: ordered_at
+        type: time
+        type_params:
+          time_granularity: day
+    measures:
+      - name: revenue          # shared name (also defined under refunds)
+        agg: sum
+        expr: amount
+      - name: order_revenue    # unique to orders
+        agg: sum
+        expr: amount
+
+  - name: refunds
+    model: ref('fct_refunds')
+    entities:
+      - name: refund_id
+        type: primary
+    dimensions:
+      - name: refunded_at
+        type: time
+        type_params:
+          time_granularity: day
+    measures:
+      - name: revenue          # shared name (also defined under orders)
+        agg: sum
+        expr: refund_amount
+      - name: refund_revenue   # unique to refunds
+        agg: sum
+        expr: refund_amount
+
+metrics:
+  - name: orders_revenue
+    description: "Order revenue."
+    type: simple
+    type_params:
+      measure: order_revenue
+    config:
+      meta:
+        owner: "data-team"
+
+  - name: refunds_revenue
+    description: "Refund revenue."
+    type: simple
+    type_params:
+      measure: refund_revenue
+    config:
+      meta:
+        owner: "data-team"
+
+  - name: ambiguous_revenue
+    description: "References the shared measure name — first-match (orders) wins."
+    type: simple
+    type_params:
+      measure: revenue
+    config:
+      meta:
+        owner: "data-team"

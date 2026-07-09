@@ -1,0 +1,19 @@
+models:
+  - name: fct_events
+    semantic_model:
+      enabled: true
+    agg_time_dimension: occurred_at
+    columns:
+      - name: event_id
+        entity: {type: primary, name: event}
+      - name: occurred_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: event_count
+        type: simple
+        label: Event Count
+        description: "Sum of event amounts."
+        agg: sum
+        expr: amount
+        config: {meta: {}}

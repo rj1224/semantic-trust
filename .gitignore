@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+target/
+logs/
+.user.yml
+.superpowers/
+.hypothesis/
+dist/

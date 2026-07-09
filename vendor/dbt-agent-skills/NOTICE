@@ -1,0 +1,4 @@
+These files under vendor/dbt-agent-skills/ are copied from dbt-labs/dbt-agent-skills
+(https://github.com/dbt-labs/dbt-agent-skills), skill building-dbt-semantic-layer,
+licensed under the Apache License 2.0. Copyright dbt Labs, Inc.
+Vendored verbatim; see VERSION for the pinned commit. Not modified.

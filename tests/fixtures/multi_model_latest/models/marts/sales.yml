@@ -1,0 +1,48 @@
+# Latest MetricFlow spec: two models, each with its own nested simple metric.
+# Simple metrics nested under semantic_model.metrics, agg + expr inline.
+models:
+  - name: fct_orders
+    semantic_model:
+      name: orders
+      entities:
+        - name: order_id
+          type: primary
+      columns:
+        - name: ordered_at
+          semantic_type: time
+          granularity: day
+        - name: order_amount
+          semantic_type: numeric
+      agg_time_dimension: ordered_at
+      metrics:
+        - name: total_order_revenue
+          description: "Sum of order amounts."
+          type: simple
+          agg: sum
+          expr: order_amount
+          config:
+            meta:
+              owner: "data-team"
+
+  - name: fct_refunds
+    semantic_model:
+      name: refunds
+      entities:
+        - name: refund_id
+          type: primary
+      columns:
+        - name: refunded_at
+          semantic_type: time
+          granularity: day
+        - name: refund_amount
+          semantic_type: numeric
+      agg_time_dimension: refunded_at
+      metrics:
+        - name: total_refunds
+          description: "Sum of refund amounts."
+          type: simple
+          agg: sum
+          expr: refund_amount
+          config:
+            meta:
+              owner: "data-team"

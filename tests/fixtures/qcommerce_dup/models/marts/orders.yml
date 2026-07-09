@@ -1,0 +1,32 @@
+semantic_models:
+  - name: orders
+    model: ref('fct_orders')
+    entities:
+      - name: order_id
+        type: primary
+    dimensions:
+      - name: ordered_at
+        type: time
+        type_params:
+          time_granularity: day
+    measures:
+      - name: order_total
+        agg: sum
+        expr: amount
+metrics:
+  - name: qcommerce_total_revenue
+    description: "Sum of all order amounts."
+    type: simple
+    type_params:
+      measure: order_total
+    config:
+      meta:
+        owner: "data-team"
+  - name: qcommerce_revenue
+    description: "Duplicate of total_revenue under a different name."
+    type: simple
+    type_params:
+      measure: order_total    # identical formula — uniqueness gate must fire
+    config:
+      meta:
+        owner: "data-team"

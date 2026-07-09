@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "semantic-trust": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["semantic-trust-mcp"]
+    }
+  }
+}

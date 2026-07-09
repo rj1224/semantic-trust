@@ -1,0 +1,52 @@
+# Latest MetricFlow spec — DISCRIMINATING fixture for structural attribution.
+# Two models BOTH aggregate a column named `amount`. Each carries its own
+# nested simple metric. Under the old column-set-membership heuristic, both
+# metrics matched the first model's column set (cross-attribution / false
+# uniqueness collision). Under structural nesting, each metric belongs ONLY
+# to the model it is nested under.
+models:
+  - name: fct_orders
+    semantic_model:
+      name: orders
+      entities:
+        - name: order_id
+          type: primary
+      columns:
+        - name: ordered_at
+          semantic_type: time
+          granularity: day
+        - name: amount
+          semantic_type: numeric
+      agg_time_dimension: ordered_at
+      metrics:
+        - name: total_order_amount
+          description: "Sum of order amounts."
+          type: simple
+          agg: sum
+          expr: amount
+          config:
+            meta:
+              owner: "data-team"
+
+  - name: fct_refunds
+    semantic_model:
+      name: refunds
+      entities:
+        - name: refund_id
+          type: primary
+      columns:
+        - name: refunded_at
+          semantic_type: time
+          granularity: day
+        - name: amount
+          semantic_type: numeric
+      agg_time_dimension: refunded_at
+      metrics:
+        - name: total_refund_amount
+          description: "Sum of refund amounts."
+          type: simple
+          agg: sum
+          expr: amount
+          config:
+            meta:
+              owner: "data-team"

@@ -1,0 +1,19 @@
+models:
+  - name: payments
+    semantic_model:
+      enabled: true
+    agg_time_dimension: paid_at
+    columns:
+      - name: payment_id
+        entity: {type: primary, name: customer_id}
+      - name: paid_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: qcommerce_joinbreak_total_payments
+        type: simple
+        label: Total Payments
+        description: "Sum of all payment amounts."
+        agg: sum
+        expr: payment_amount
+        config: {meta: {owner: "data-team"}}

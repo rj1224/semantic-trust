@@ -1,0 +1,17 @@
+models:
+  - name: orders
+    semantic_model:
+      enabled: true
+    columns:
+      - name: order_id
+        entity: {type: primary, name: order}
+      - name: status
+        dimension: {type: categorical}
+    metrics:
+      - name: qcommerce_total_revenue
+        type: simple
+        label: Total Revenue
+        description: "Sum of all order amounts."
+        agg: sum
+        expr: amount
+        config: {meta: {owner: "data-team"}}
