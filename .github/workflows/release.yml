@@ -1,0 +1,42 @@
+name: Release to PyPI
+
+# Publishes to PyPI via Trusted Publishing (OIDC) on a version tag.
+# No API token is stored anywhere — GitHub mints a short-lived OIDC token that
+# PyPI trusts, based on the trusted-publisher config you set on pypi.org.
+#
+# PyPI trusted-publisher config to match this workflow:
+#   Owner:        rj1224
+#   Repository:   semantic-trust
+#   Workflow:     release.yml
+#   Environment:  pypi
+# (Register it as a "pending publisher" before the project's first publish.)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/semantic-trust
+    permissions:
+      id-token: write   # REQUIRED for Trusted Publishing (OIDC); no token needed
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build sdist + wheel
+        run: uv build
+
+      - name: Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # No `password:` — the action performs the OIDC token exchange automatically.
