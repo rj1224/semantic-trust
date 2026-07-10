@@ -27,6 +27,8 @@ jobs:
       url: https://pypi.org/p/semantic-trust
     permissions:
       id-token: write   # REQUIRED for Trusted Publishing (OIDC); no token needed
+      contents: read    # REQUIRED so actions/checkout can read the (private) repo
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
