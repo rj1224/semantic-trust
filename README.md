@@ -35,7 +35,7 @@ claude plugin marketplace add rj1224/semantic-trust
 claude plugin install semantic-trust@semantic-trust
 ```
 
-The second command uses the format `<marketplace-name>@<plugin-name>`. You can also install via the `/plugin` menu inside a Claude Code session.
+The second command uses the format `<plugin-name>@<marketplace-name>` (here both are `semantic-trust`). You can also install via the `/plugin` menu inside a Claude Code session.
 
 Once installed, the MCP server starts automatically — the plugin's `.mcp.json` launches it via `uvx --from semantic-trust semantic-trust-mcp`. No manual server step is needed.
 

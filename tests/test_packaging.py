@@ -85,6 +85,10 @@ def test_marketplace_manifest_valid():
     # No stale tokens in the manifest
     _banned = "".join(["por", "ter"])
     assert _banned not in raw.lower()
+    # Version must stay in lockstep with the package version (guards the release bump)
+    assert plugin["version"] == _pyproject()["project"]["version"], (
+        "marketplace.json plugin version must equal pyproject version"
+    )
 
 
 def test_mcp_manifest_launches_via_uvx():
