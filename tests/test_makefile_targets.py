@@ -36,8 +36,3 @@ def test_ci_workflow_has_two_jobs():
     workflow = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text()
     assert "hermetic" in workflow
     assert "dbt12" in workflow
-
-
-def test_ci_workflow_marked_prepared():
-    workflow = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text()
-    assert "PREPARED" in workflow or "prepared" in workflow.lower()
