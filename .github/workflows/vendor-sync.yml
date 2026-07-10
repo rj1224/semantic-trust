@@ -1,0 +1,45 @@
+name: vendor-sync
+
+# Weekly check for drift between the vendored dbt-labs spec refs and upstream main.
+# On drift, applies the bump and opens a PR for review. Never merges automatically —
+# a maintainer reviews whether the grammar changes affect our templates/skills.
+#
+# Requires: repo Settings → Actions → General → Workflow permissions →
+#   "Allow GitHub Actions to create and approve pull requests" (enabled).
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"   # Mondays 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply vendor bump if drifted
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/vendor_bump.sh
+
+      - name: Open PR if the vendored refs changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/vendor-bump
+          title: "chore: vendor bump dbt-agent-skills"
+          commit-message: "chore: vendor bump dbt-agent-skills to upstream main"
+          body: |
+            Automated vendor sync — the pinned `dbt-labs/dbt-agent-skills` spec refs
+            drifted from upstream `main`.
+
+            **Review before merge:** if any change touches the grammar our
+            `skills/`/`templates/` depend on (semantic_model form, metric shapes,
+            gate rules), update those to match, then merge.
+          labels: vendor-sync
+          delete-branch: true
