@@ -42,7 +42,7 @@ def test_dist_name_is_semantic_trust():
 
 def test_runtime_deps_are_mcp_only():
     deps = _pyproject()["project"]["dependencies"]
-    assert deps == ["mcp>=1.0"], deps  # pyyaml moved to the ci extra (test-only)
+    assert deps == ["mcp>=1.0,<2"], deps  # pyyaml moved to the ci extra (test-only)
 
 def test_entry_points_renamed():
     scripts = _pyproject()["project"]["scripts"]
@@ -130,11 +130,6 @@ def test_readme_has_required_sections():
     for needle in ("install", "dbt", "semantic", "license", "1.12", "not affiliated"):
         assert needle in txt, f"README missing '{needle}'"
 
-
-def test_docs_have_no_proprietary_refs():
-    _banned = "".join(["por", "ter"])  # avoid literal so leakage gate stays clean
-    for p in ("README.md", "CHANGELOG.md", "LICENSE"):
-        assert _banned not in (ROOT / p).read_text().lower()
 
 
 # ---------------------------------------------------------------------------

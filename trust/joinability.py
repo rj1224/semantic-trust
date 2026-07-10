@@ -12,15 +12,9 @@ Produces Issue(severity="warning", provenance="deterministic") for:
 
 Orphan detection strategy
 --------------------------
-MetricFlow ships `CommonEntitysRule` in
-  metricflow_semantic_interfaces.validations.common_entities
-This rule does the same orphan check but requires constructing MetricFlow's
-internal SemanticManifest/SemanticModel objects.  We confirm the import
-succeeds (proving the rule exists and the dependency is present) and then
-implement the equivalent logic over NormalizedModel directly — avoiding the
-overhead of building MetricFlow's internal object graph just to call one rule.
-`CommonEntitysRule` is a NON-DEFAULT MetricFlow rule: it is NOT included in
-the validator's DEFAULT_RULES set; callers must add it explicitly.
+We implement the orphan check directly over NormalizedModel.entities dicts
+({name, type}) — the equivalent of MetricFlow's CommonEntitysRule algorithm
+but without the overhead of building MetricFlow's internal object graph.
 
 Parity detection strategy
 --------------------------
@@ -39,18 +33,6 @@ from trust.report import Issue
 
 if TYPE_CHECKING:
     from trust.normalized import NormalizedModel
-
-# --- MetricFlow import probe (non-default rule; light dependency) ---
-# CommonEntitysRule is a non-default MetricFlow validation rule.  We confirm
-# the import works so users know the dependency is present, then fall back to
-# our own equivalent scan over NormalizedModel.entities.
-try:
-    from metricflow_semantic_interfaces.validations.common_entities import (  # noqa: F401
-        CommonEntitysRule,
-    )
-    _MF_COMMON_ENTITIES_AVAILABLE = True
-except ImportError:
-    _MF_COMMON_ENTITIES_AVAILABLE = False
 
 # Types that represent "one end" of a join (primary key side).
 _PRIMARY_TYPES = {"primary", "natural"}
@@ -75,9 +57,6 @@ def _orphan_issues(models: list) -> list[Issue]:
     Logic mirrors CommonEntitysRule._map_semantic_model_entities but operates
     on NormalizedModel.entities dicts ({name, type}) instead of MetricFlow's
     internal Entity/SemanticModel objects.
-
-    Source recorded as "own_scan" when MF rule is unavailable,
-    "mf_equivalent" when the import confirmed availability.
     """
     # Map entity_name -> set of model names that declare it.
     entity_to_models: dict[str, set[str]] = defaultdict(set)
@@ -96,9 +75,6 @@ def _orphan_issues(models: list) -> list[Issue]:
         return []
 
     issues: list[Issue] = []
-    source_note = (
-        "mf_equivalent" if _MF_COMMON_ENTITIES_AVAILABLE else "own_scan"
-    )
 
     # Second pass — emit one Issue per (entity_name, model) pair that is orphaned.
     for model in models:
@@ -115,8 +91,7 @@ def _orphan_issues(models: list) -> list[Issue]:
                         message=(
                             f"Entity '{name}' on model '{model.name}' "
                             f"appears on no other model — it cannot "
-                            f"participate in a join. "
-                            f"(source: {source_note})"
+                            f"participate in a join."
                         ),
                         location=model.source_file,
                         provenance="deterministic",
@@ -201,8 +176,8 @@ def check_joinability(models: list) -> list[Issue]:
 
     Checks performed:
       1. Orphan entities (joinability_orphan) — entity on only one model.
-         Leverages MetricFlow's CommonEntitysRule algorithm when the import
-         is available; falls back to own scan if not.
+         Implements the equivalent of MetricFlow's CommonEntitysRule algorithm
+         directly over NormalizedModel.entities.
       2. Name/type parity mismatches (joinability_parity) — same conceptual
          join partner has different entity names across models.
          MetricFlow has no built-in rule for this; we build it ourselves.

@@ -5,7 +5,7 @@ Exposes two MCP tools over the mcp Python SDK:
   - scaffold_semantic_model: reads manifest.json and returns a latest-spec skeleton.
 
 Launched by: uvx --from <pkg-or-path> semantic-trust-mcp
-Registered in .claude-plugin/plugin.json under mcpServers.
+declared in `.mcp.json` under mcpServers.
 
 The CLI (trust/cli.py) is retained for local dev only; skills must use these MCP tools.
 """
