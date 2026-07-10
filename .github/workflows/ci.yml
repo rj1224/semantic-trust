@@ -1,9 +1,10 @@
-# PREPARED — activates on push once a remote is configured (Phase 5).
-# Until then this workflow is structurally inert (workflow_dispatch only — cannot auto-fire).
-# Phase 5 will change the trigger to: on: push: / pull_request:
 name: ci
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:

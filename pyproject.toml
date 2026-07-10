@@ -2,8 +2,23 @@
 name = "semantic-trust"
 version = "0.1.0"
 description = "Score and certify dbt Semantic Layer models — trust bands, gates, and dbt-parse certification."
+authors = [{ name = "Ravish Jain", email = "ravishjain024@gmail.com" }]
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["mcp>=1.0"]    # engine reads the compiled dbt manifest (JSON); MCP = the server SDK
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Database",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+[project.urls]
+Homepage = "https://github.com/rj1224/semantic-trust"
+Repository = "https://github.com/rj1224/semantic-trust"
 
 # Entry points (AD-1). MCP server is the skill-facing interface (launched via uvx by the plugin);
 # the `semantic-trust` console script is the local dev/testing CLI.
