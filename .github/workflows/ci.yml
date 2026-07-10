@@ -1,3 +1,4 @@
+# prepared
 name: ci
 
 on:
@@ -17,7 +18,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install project
-        run: uv sync
+        run: uv sync --extra ci
       - name: Run secrets check
         run: uv run python scripts/check_secrets.py .
       - name: Run hermetic gate

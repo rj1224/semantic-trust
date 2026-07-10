@@ -73,7 +73,7 @@ def test_mcp_manifest_launches_via_uvx():
     srv = m["mcpServers"]["semantic-trust"]
     assert srv["type"] == "stdio"
     assert srv["command"] == "uvx"
-    assert srv["args"] == ["semantic-trust-mcp"]
+    assert srv["args"] == ["--from", "semantic-trust", "semantic-trust-mcp"]
 
 
 # ---------------------------------------------------------------------------

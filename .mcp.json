@@ -3,7 +3,7 @@
     "semantic-trust": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["semantic-trust-mcp"]
+      "args": ["--from", "semantic-trust", "semantic-trust-mcp"]
     }
   }
 }
