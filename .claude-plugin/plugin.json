@@ -1,7 +1,7 @@
 {
   "name": "semantic-trust",
   "description": "Score and certify dbt Semantic Layer models — deterministic trust bands, gates (uniqueness/joinability/ownership), LLM-judgment, and dbt-parse certification.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Ravish Jain",
     "email": "ravishjain024@gmail.com"

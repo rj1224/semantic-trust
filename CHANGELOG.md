@@ -4,7 +4,22 @@ All notable changes to `semantic-trust` will be documented in this file.
 
 ---
 
-## 0.1.0 — 2026 (unreleased)
+## 0.1.1 — 2026-07-11
+
+Launch-blocker fixes applied after initial PyPI release.
+
+### Fixed
+
+- **MCP launch command** — corrected from `uvx semantic-trust-mcp` to `uvx --from semantic-trust semantic-trust-mcp` in `.mcp.json`, README, and e2e references.
+- **CI extras** — CI workflow now installs the `ci` extra (`pip install "semantic-trust[ci]"`) so `pytest`, `hypothesis`, and `pyyaml` are available in CI.
+- **Skill runtime paths** — all bundled-file references in `skills/**/SKILL.md` prefixed with `${CLAUDE_PLUGIN_ROOT}/` so they resolve when the plugin's CWD is the user's dbt project, not the plugin root.
+- **Marketplace manifest** — added `.claude-plugin/marketplace.json` and rewrote install docs to reflect the real two-step flow (`claude plugin marketplace add` + `claude plugin install`).
+- **Apache-2.0 LICENSE** — added `vendor/dbt-agent-skills/LICENSE` for vendored dbt-labs Semantic Layer spec references (content remains Apache-2.0; project itself is MIT).
+- **MCP dependency cap** — capped `mcp<2` in `pyproject.toml` runtime dependencies to prevent breaking changes from a major MCP SDK bump.
+
+---
+
+## 0.1.0 — 2026-07-01
 
 Initial packaging of `semantic-trust`.
 

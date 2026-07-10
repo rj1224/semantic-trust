@@ -63,7 +63,7 @@ import json
 def test_plugin_manifest_valid():
     m = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text())
     assert m["name"] == "semantic-trust"
-    assert m["version"] == "0.1.0"
+    assert m["version"] == "0.1.1"
     assert m["author"]["name"] == "Ravish Jain"
     assert m["author"]["email"] == "ravishjain024@gmail.com"
     assert m["description"]

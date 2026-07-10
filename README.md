@@ -110,7 +110,7 @@ The vendored content under `vendor/dbt-agent-skills/` consists of dbt-labs' publ
 
 With `approved_email_domains` set, the ownership gate fails any model whose `owner.email` does not match one of the listed domains. Without this config key, the ownership gate only checks that an email is present.
 
-No other configuration keys are required or supported in 0.1.0.
+No other configuration keys are required or supported.
 
 ---
 
