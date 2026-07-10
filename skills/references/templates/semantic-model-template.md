@@ -1,8 +1,8 @@
 # Semantic Model — Template, Checklist & Example
 
 <!--
-Grammar authority: vendor/dbt-agent-skills/latest-spec.md (latest, dbt 1.12+) and
-vendor/dbt-agent-skills/legacy-spec.md (dbt 1.6–1.11).
+Grammar authority: ${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md (latest, dbt 1.12+) and
+${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/legacy-spec.md (dbt 1.6–1.11).
 This template shows ONLY DataStack's additive config.meta layer (owner, maturity) on top of
 that grammar. For the full grammar reference, read the vendored guides directly.
 -->
@@ -105,7 +105,7 @@ models:
 
 ## Validation rules
 
-Validation rules for semantic-model documents live in `skills/references/validation/`. Load rules on demand — do not preload upfront.
+Validation rules for semantic-model documents live in `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/`. Load rules on demand — do not preload upfront.
 
 | Gate | File | Coverage |
 |------|------|----------|
@@ -201,7 +201,7 @@ models:
 
 ## Example (Legacy Spec — dbt 1.6 to 1.11)
 
-See `vendor/dbt-agent-skills/legacy-spec.md` for full reference. In the legacy spec, semantic models are separate top-level resources with `semantic_models:`, `entities:`, `dimensions:` (with `type_params.time_granularity` for time dims), and `measures:` arrays. Metrics are at the top-level `metrics:` key and reference measures via `type_params.measure`.
+See `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/legacy-spec.md` for full reference. In the legacy spec, semantic models are separate top-level resources with `semantic_models:`, `entities:`, `dimensions:` (with `type_params.time_granularity` for time dims), and `measures:` arrays. Metrics are at the top-level `metrics:` key and reference measures via `type_params.measure`.
 
 ```yaml
 semantic_models:

@@ -1,8 +1,8 @@
 # Metrics — Template & Example
 
 <!--
-Grammar authority: vendor/dbt-agent-skills/latest-spec.md (latest, dbt 1.12+) and
-vendor/dbt-agent-skills/legacy-spec.md (dbt 1.6–1.11).
+Grammar authority: ${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md (latest, dbt 1.12+) and
+${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/legacy-spec.md (dbt 1.6–1.11).
 This template shows ONLY DataStack's additive config.meta layer on top of that grammar.
 -->
 
@@ -147,7 +147,7 @@ metrics:
 
 ## Validation rules
 
-Validation rules live in `skills/references/validation/`. Load on demand.
+Validation rules live in `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/`. Load on demand.
 
 | Gate | File | Coverage |
 |------|------|----------|

@@ -1,7 +1,7 @@
 """
 Manifest-grounded semantic-model scaffolding (AD-9).
 Reads dbt manifest.json to extract real columns + data types, classifies them,
-and emits a CORRECT latest-spec skeleton per vendor/dbt-agent-skills/latest-spec.md.
+and emits a CORRECT latest-spec skeleton per ${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md.
 
 Grammar: dbt Core 1.12+ / Fusion format.
   - semantic_model: {enabled: true} at model level
@@ -50,7 +50,7 @@ def classify(data_type: str) -> str:
 
 def scaffold_semantic_model(model_name: str, columns: list) -> dict:
     """Emit a CORRECT latest-spec skeleton (dbt Core 1.12+) from real manifest columns.
-    Grammar per vendor/dbt-agent-skills/latest-spec.md: semantic_model:{enabled:true};
+    Grammar per ${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md: semantic_model:{enabled:true};
     agg_time_dimension + columns + metrics at model level; entity:/dimension: blocks on
     columns; column-level granularity for time; NO semantic_type; numeric cols are
     metric candidates (simple-metric expr targets), not dimensions."""
@@ -79,5 +79,5 @@ def scaffold_semantic_model(model_name: str, columns: list) -> dict:
         "_metric_candidates": metric_candidates,
         "_note": ("skeleton from dbt manifest; set entity types (primary/foreign), "
                   "descriptions, and simple metrics (agg/expr/label) per "
-                  "vendor/dbt-agent-skills/latest-spec.md before committing"),
+                  "${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md before committing"),
     }

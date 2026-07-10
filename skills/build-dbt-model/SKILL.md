@@ -17,7 +17,7 @@ You are helping the user create a proper dbt model from a SQL query, then genera
 
 This skill has 7 steps. Follow them in order. Do not skip any step.
 
-**Grammar reference:** All semantic-model and metric YAML in this skill follows the canonical grammar documented in `vendor/dbt-agent-skills/latest-spec.md` (dbt Core 1.12+ / Fusion) and `vendor/dbt-agent-skills/legacy-spec.md` (dbt Core 1.6–1.11). Do not invent grammar variants not present in those files.
+**Grammar reference:** All semantic-model and metric YAML in this skill follows the canonical grammar documented in `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md` (dbt Core 1.12+ / Fusion) and `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/legacy-spec.md` (dbt Core 1.6–1.11). Do not invent grammar variants not present in those files.
 
 ## When NOT to Use
 
@@ -57,7 +57,7 @@ Determine the input type from what the user has provided:
 
 Ask the user for:
 
-1. **Model name** — suggest based on naming conventions from `skills/references/standards/naming-conventions.md`:
+1. **Model name** — suggest based on naming conventions from `${CLAUDE_PLUGIN_ROOT}/skills/references/standards/naming-conventions.md`:
    - Must have a layer prefix: `mart_`, `fact_`, `dim_`, `stg_`, or `int_`
    - Use snake_case; describe the business entity or event
 2. **Target layer** — staging / intermediate / mart / fact / dim
@@ -65,7 +65,7 @@ Ask the user for:
 4. **Grain** — what one row represents ("One row = one order line item")
 5. **Owner email** — required for ownership scoring
 
-Use the model-type decision tree in `skills/references/standards/model-design.md` (Section 2) to auto-suggest the layer if the user is unsure. Present your suggestion and get confirmation. Do NOT proceed until the user approves the model name and layer.
+Use the model-type decision tree in `${CLAUDE_PLUGIN_ROOT}/skills/references/standards/model-design.md` (Section 2) to auto-suggest the layer if the user is unsure. Present your suggestion and get confirmation. Do NOT proceed until the user approves the model name and layer.
 
 ---
 
@@ -73,8 +73,8 @@ Use the model-type decision tree in `skills/references/standards/model-design.md
 
 **The user's SQL query is the primary source of truth for the model logic.** Convert it into a proper dbt model file. Do not rewrite or reinterpret the business logic.
 
-Read `skills/references/standards/model-design.md` on demand — load Section 1 (Layers) and Section 6 (Contracts).
-Read `skills/references/workflows/model-building-workflows.md` — load the workflow section matching the model type:
+Read `${CLAUDE_PLUGIN_ROOT}/skills/references/standards/model-design.md` on demand — load Section 1 (Layers) and Section 6 (Contracts).
+Read `${CLAUDE_PLUGIN_ROOT}/skills/references/workflows/model-building-workflows.md` — load the workflow section matching the model type:
 - Fact → Section 1 | Dimension → Section 2 | Mart → Section 3
 
 ### 3a. Transform SQL to dbt
@@ -158,7 +158,7 @@ inputs:
   model: <model_name>
 ```
 
-The tool returns a latest-spec skeleton (per `vendor/dbt-agent-skills/latest-spec.md`):
+The tool returns a latest-spec skeleton (per `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md`):
 ```json
 {
   "model": "<model_name>",
@@ -171,7 +171,7 @@ The tool returns a latest-spec skeleton (per `vendor/dbt-agent-skills/latest-spe
     {"name": "<numeric_col>", "_inferred": "measure_candidate"}
   ],
   "_metric_candidates": ["<numeric_col>", ...],
-  "_note": "skeleton from dbt manifest; set entity types (primary/foreign), descriptions, and simple metrics (agg/expr/label) per vendor/dbt-agent-skills/latest-spec.md before committing"
+  "_note": "skeleton from dbt manifest; set entity types (primary/foreign), descriptions, and simple metrics (agg/expr/label) per ${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md before committing"
 }
 ```
 
@@ -192,7 +192,7 @@ Using the scaffold from Step 5 as the column-name ground truth, fill the semanti
 
 ### 6a. Entity Roles
 
-Use the Entity Identification Decision Tree from `skills/references/standards/metric-design.md` (Section 2):
+Use the Entity Identification Decision Tree from `${CLAUDE_PLUGIN_ROOT}/skills/references/standards/metric-design.md` (Section 2):
 - Identify the primary entity (the main business object — one per semantic model)
 - Identify foreign entities (related objects with FK relationships)
 - Use `expr:` for all column references — never `column:`
@@ -210,7 +210,7 @@ Ask the user which numeric columns to expose as metrics. For each selected:
 - Confirm aggregation type (sum / count / avg / count_distinct)
 
 **Simple metrics** (single SM) → define inline under `semantic_model.metrics` in the same YAML file.
-**Cross-SM derived/ratio metrics** → separate file per `skills/references/standards/metric-design.md` (Section 3).
+**Cross-SM derived/ratio metrics** → separate file per `${CLAUDE_PLUGIN_ROOT}/skills/references/standards/metric-design.md` (Section 3).
 
 Read the canonical cross-SM file-placement rule (Section 3 of metric-design.md): the criterion is cross-SM dependency, not metric complexity.
 
@@ -218,7 +218,7 @@ Read the canonical cross-SM file-placement rule (Section 3 of metric-design.md):
 
 Fill all `config.meta` ownership fields. If not provided by the user, generate with blank defaults (`""` for strings, `[]` for lists). Never use `<TODO>` or `<REPLACE>` placeholders.
 
-### 6e. YAML Spec Rules (latest MetricFlow spec per `vendor/dbt-agent-skills/latest-spec.md`)
+### 6e. YAML Spec Rules (latest MetricFlow spec per `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md`)
 
 - `models:` nested with `semantic_model:` key (`semantic_model: {enabled: true}`)
 - Entities: inline `entity:` block on each column (not a top-level `entities:` list)
@@ -254,7 +254,7 @@ dbt --version
 ```
 
 - **dbt-core < 1.12 (legacy spec):** optionally run `mf validate-configs` for additional semantic-query validation. If it exits non-zero, report as a warning and let the user decide whether to proceed.
-- **dbt-core ≥ 1.12 (latest spec):** do not run `mf validate-configs`. The `dbt-metricflow` package pins `dbt-core < 1.12` and is structurally incompatible with latest-spec projects. See `vendor/dbt-agent-skills/latest-spec.md` § Validation.
+- **dbt-core ≥ 1.12 (latest spec):** do not run `mf validate-configs`. The `dbt-metricflow` package pins `dbt-core < 1.12` and is structurally incompatible with latest-spec projects. See `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md` § Validation.
 
 ---
 
@@ -349,15 +349,15 @@ Load rules on demand — do not preload all files upfront.
 
 | Gate / Dimension | Rule file |
 |---|---|
-| Structural `[S]` | `skills/references/validation/structural.md` |
-| Ownership `[O]` | `skills/references/validation/ownership.md` |
-| Completeness `[D]` | `skills/references/validation/completeness.md` |
-| Uniqueness `[U]` | `skills/references/validation/uniqueness.md` |
-| Joinability `[J]` | `skills/references/validation/joinability.md` |
-| Data Context `[C]` | `skills/references/validation/context-scoring.md` |
-| Data Quality `[Q]` | `skills/references/validation/quality-scoring.md` |
-| Severity mapping | `skills/references/validation/severity-matrix.md` |
-| Score formula + bands | `skills/references/validation/scoring-formula.md` |
+| Structural `[S]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/structural.md` |
+| Ownership `[O]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/ownership.md` |
+| Completeness `[D]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/completeness.md` |
+| Uniqueness `[U]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/uniqueness.md` |
+| Joinability `[J]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/joinability.md` |
+| Data Context `[C]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/context-scoring.md` |
+| Data Quality `[Q]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/quality-scoring.md` |
+| Severity mapping | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/severity-matrix.md` |
+| Score formula + bands | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/scoring-formula.md` |
 
 The email domain allowlist is read from `.semantic-trust.json` → `approved_email_domains` at runtime. No domain is hardcoded in this skill.
 

@@ -64,7 +64,7 @@ models:
 
 ## Validation rules
 
-Validation rules live in `skills/references/validation/`. Load on demand — do not preload upfront.
+Validation rules live in `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/`. Load on demand — do not preload upfront.
 
 | Gate | File | Coverage |
 |------|------|----------|

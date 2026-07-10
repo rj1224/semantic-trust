@@ -14,7 +14,7 @@ You are helping the user generate complete semantic-layer documentation for an e
 
 This skill has 6 steps. Follow them in order. Do not skip any step.
 
-**Grammar reference:** All semantic-model and metric YAML in this skill follows the canonical grammar documented in `vendor/dbt-agent-skills/latest-spec.md` (dbt Core 1.12+ / Fusion) and `vendor/dbt-agent-skills/legacy-spec.md` (dbt Core 1.6–1.11). Do not invent grammar variants not present in those files.
+**Grammar reference:** All semantic-model and metric YAML in this skill follows the canonical grammar documented in `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md` (dbt Core 1.12+ / Fusion) and `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/legacy-spec.md` (dbt Core 1.6–1.11). Do not invent grammar variants not present in those files.
 
 ## When NOT to Use
 
@@ -64,7 +64,7 @@ inputs:
   model: <model_name>
 ```
 
-The tool returns a latest-spec skeleton (per `vendor/dbt-agent-skills/latest-spec.md`):
+The tool returns a latest-spec skeleton (per `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md`):
 ```json
 {
   "model": "<model_name>",
@@ -77,7 +77,7 @@ The tool returns a latest-spec skeleton (per `vendor/dbt-agent-skills/latest-spe
     {"name": "<numeric_col>", "_inferred": "measure_candidate"}
   ],
   "_metric_candidates": ["<numeric_col>", ...],
-  "_note": "skeleton from dbt manifest; set entity types (primary/foreign), descriptions, and simple metrics (agg/expr/label) per vendor/dbt-agent-skills/latest-spec.md before committing"
+  "_note": "skeleton from dbt manifest; set entity types (primary/foreign), descriptions, and simple metrics (agg/expr/label) per ${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md before committing"
 }
 ```
 
@@ -132,7 +132,7 @@ Wait for the user to respond before proceeding. The user's choice determines whi
 
 Rules:
 - Metrics require a semantic model. If the user wants metrics without a semantic model, generate the semantic model first.
-- Metrics are defined inline in the semantic model file (latest spec — see `skills/references/templates/semantic-model-template.md`).
+- Metrics are defined inline in the semantic model file (latest spec — see `${CLAUDE_PLUGIN_ROOT}/skills/references/templates/semantic-model-template.md`).
 - Few-shot examples can be generated independently.
 
 **`requires_semantic_docs` flag:**
@@ -146,13 +146,13 @@ Rules:
 
 ### 4a. Load Templates
 
-Read the relevant templates from `skills/references/templates/` in the project where this skill is installed:
+Read the relevant templates from `${CLAUDE_PLUGIN_ROOT}/skills/references/templates/` in the project where this skill is installed:
 - `semantic-model-template.md` — for semantic models and their inline simple metrics
 - `metrics-template.md` — for cross-model derived/ratio/conversion metrics
 - `dbt-docs-template.md` — for dbt model documentation
 - `few-shot-template.md` — for few-shot JSON examples
 
-The templates emit the **latest MetricFlow spec** per `vendor/dbt-agent-skills/latest-spec.md`: `models:` nested with a `semantic_model:` key. Simple metrics are defined inline under `semantic_model.metrics` with `agg` + `expr` directly (no `type_params:` wrapper, no `measures:` block).
+The templates emit the **latest MetricFlow spec** per `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md`: `models:` nested with a `semantic_model:` key. Simple metrics are defined inline under `semantic_model.metrics` with `agg` + `expr` directly (no `type_params:` wrapper, no `measures:` block).
 
 ### 4b. Generate
 
@@ -230,7 +230,7 @@ dbt --version
 ```
 
 - **dbt-core < 1.12 (legacy spec):** optionally run `mf validate-configs` as an additional semantic-query validation layer. This tests whether MetricFlow can execute queries — a check `dbt parse` does not cover for legacy projects. If it exits non-zero, report the error as a warning and ask the user whether to proceed.
-- **dbt-core ≥ 1.12 (latest spec):** **do not run `mf validate-configs`**. The `dbt-metricflow` package pins `dbt-core < 1.12` and is structurally incompatible with latest-spec projects. See `vendor/dbt-agent-skills/latest-spec.md` § Validation for authoritative validation requirements.
+- **dbt-core ≥ 1.12 (latest spec):** **do not run `mf validate-configs`**. The `dbt-metricflow` package pins `dbt-core < 1.12` and is structurally incompatible with latest-spec projects. See `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md` § Validation for authoritative validation requirements.
 
 **If `dbt parse` exits zero:** proceed to Step 6 regardless of the `mf validate-configs` result.
 
@@ -323,15 +323,15 @@ Load rules on demand — do not preload all files upfront.
 
 | Gate / Dimension | Rule file |
 |---|---|
-| Structural `[S]` | `skills/references/validation/structural.md` |
-| Ownership `[O]` | `skills/references/validation/ownership.md` |
-| Completeness `[D]` | `skills/references/validation/completeness.md` |
-| Uniqueness `[U]` | `skills/references/validation/uniqueness.md` |
-| Joinability `[J]` | `skills/references/validation/joinability.md` |
-| Data Context `[C]` | `skills/references/validation/context-scoring.md` |
-| Data Quality `[Q]` | `skills/references/validation/quality-scoring.md` |
-| Severity mapping | `skills/references/validation/severity-matrix.md` |
-| Score formula + bands | `skills/references/validation/scoring-formula.md` |
+| Structural `[S]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/structural.md` |
+| Ownership `[O]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/ownership.md` |
+| Completeness `[D]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/completeness.md` |
+| Uniqueness `[U]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/uniqueness.md` |
+| Joinability `[J]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/joinability.md` |
+| Data Context `[C]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/context-scoring.md` |
+| Data Quality `[Q]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/quality-scoring.md` |
+| Severity mapping | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/severity-matrix.md` |
+| Score formula + bands | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/scoring-formula.md` |
 
 The email domain allowlist is read from `.semantic-trust.json` → `approved_email_domains` at runtime. No domain is hardcoded in this skill.
 

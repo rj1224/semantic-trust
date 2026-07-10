@@ -70,7 +70,7 @@ dbt --version
   mf validate-configs
   ```
 
-- **dbt-core minor ≥ 1.12 (latest spec / Fusion):** **do not run `mf validate-configs`**. The `dbt-metricflow` package pins `dbt-core < 1.12`, so it is structurally incompatible with latest-spec projects. Attempting to run it will fail with a version conflict. `dbt parse` is the authoritative and only compile gate for latest-spec projects. See `vendor/dbt-agent-skills/latest-spec.md` § Validation for the authoritative validation requirements for the latest spec.
+- **dbt-core minor ≥ 1.12 (latest spec / Fusion):** **do not run `mf validate-configs`**. The `dbt-metricflow` package pins `dbt-core < 1.12`, so it is structurally incompatible with latest-spec projects. Attempting to run it will fail with a version conflict. `dbt parse` is the authoritative and only compile gate for latest-spec projects. See `${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md` § Validation for the authoritative validation requirements for the latest spec.
 
 **In both cases:** proceed to Step 3 after this step (do not block on the `mf validate-configs` result for legacy — it is advisory unless the user explicitly treats it as blocking).
 
@@ -117,7 +117,7 @@ The tool returns the **deterministic two-level report** — the authoritative tr
 }
 ```
 
-**Score formula and band cutoffs** (source of truth: `skills/references/validation/scoring-formula.md`):
+**Score formula and band cutoffs** (source of truth: `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/scoring-formula.md`):
 - `trust_score = context × 0.60 + quality × 0.40`
 - A ≥ 90 / B ≥ 80 / C ≥ 70 / D ≥ 55 / F otherwise
 - Band is capped to F when any gate fails
@@ -128,9 +128,9 @@ The tool returns the **deterministic two-level report** — the authoritative tr
 
 ## Step 4: Run the Judgment Protocol — Advisory Document-Quality Score
 
-Read `eval/judge.md` from the project root for the full judgment protocol. Apply it to the generated semantic-layer YAML files for the model.
+Read `${CLAUDE_PLUGIN_ROOT}/eval/judge.md` from the plugin root for the full judgment protocol. Apply it to the generated semantic-layer YAML files for the model.
 
-The judgment protocol produces a payload following the shape defined in `eval/judge.md` Step 6:
+The judgment protocol produces a payload following the shape defined in `${CLAUDE_PLUGIN_ROOT}/eval/judge.md` Step 6:
 
 ```json
 {
@@ -282,16 +282,16 @@ Load rules on demand, not upfront. Reference these files for check definitions:
 
 | Gate / Dimension | Rule file |
 |---|---|
-| Structural `[S]` | `skills/references/validation/structural.md` |
-| Ownership `[O]` | `skills/references/validation/ownership.md` |
-| Completeness `[D]` | `skills/references/validation/completeness.md` |
-| Uniqueness `[U]` | `skills/references/validation/uniqueness.md` |
-| Joinability `[J]` | `skills/references/validation/joinability.md` |
-| Data Context `[C]` | `skills/references/validation/context-scoring.md` |
-| Data Quality `[Q]` | `skills/references/validation/quality-scoring.md` |
-| Severity mapping | `skills/references/validation/severity-matrix.md` |
-| Score formula + bands | `skills/references/validation/scoring-formula.md` |
-| Report schema | `skills/references/validation/report-schema.md` |
+| Structural `[S]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/structural.md` |
+| Ownership `[O]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/ownership.md` |
+| Completeness `[D]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/completeness.md` |
+| Uniqueness `[U]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/uniqueness.md` |
+| Joinability `[J]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/joinability.md` |
+| Data Context `[C]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/context-scoring.md` |
+| Data Quality `[Q]` | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/quality-scoring.md` |
+| Severity mapping | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/severity-matrix.md` |
+| Score formula + bands | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/scoring-formula.md` |
+| Report schema | `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/report-schema.md` |
 
 The email domain allowlist is read from `.semantic-trust.json` → `approved_email_domains` at runtime. No domain is hardcoded in this skill.
 

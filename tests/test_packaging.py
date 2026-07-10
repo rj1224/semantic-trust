@@ -112,3 +112,54 @@ def test_docs_have_no_proprietary_refs():
     _banned = "".join(["por", "ter"])  # avoid literal so leakage gate stays clean
     for p in ("README.md", "CHANGELOG.md", "LICENSE"):
         assert _banned not in (ROOT / p).read_text().lower()
+
+
+# ---------------------------------------------------------------------------
+# Plugin-root path guard (Task 2)
+# ---------------------------------------------------------------------------
+import re
+
+# The prefix that must appear before any cross-directory bundled-file reference.
+_PLUGIN_ROOT_PREFIX = "${CLAUDE_PLUGIN_ROOT}/"
+
+# Literal substring patterns for bundled paths that require the prefix.
+_BUNDLED_LITERALS = [
+    "vendor/dbt-agent-skills/",
+    "eval/judge.md",
+    # Full repo-rooted form of the shared references tree.
+    "skills/references/",
+]
+
+
+def _bare_bundled_re() -> re.Pattern:
+    """Return a compiled regex that matches bare bundled paths (not prefixed by
+    ${CLAUDE_PLUGIN_ROOT}/).  Uses re.escape + a negative lookbehind so the
+    prefix check is exact."""
+    escaped_prefix = re.escape(_PLUGIN_ROOT_PREFIX)
+    alts = "|".join(re.escape(p) for p in _BUNDLED_LITERALS)
+    return re.compile(r"(?<!" + escaped_prefix + r")(?:" + alts + r")")
+
+
+_BARE_BUNDLED_RE = _bare_bundled_re()
+
+
+def test_skills_use_plugin_root_for_bundled_paths():
+    """Every reference to a bundled file in skills/**/SKILL.md must be prefixed
+    with ${CLAUDE_PLUGIN_ROOT}/ so the path resolves at plugin runtime (CWD is
+    the user's dbt project, not the plugin root).
+
+    Fails on bare occurrences; correctly-prefixed paths are not flagged.
+    """
+    skills_root = ROOT / "skills"
+    hits: list[str] = []
+
+    for skill_md in sorted(skills_root.rglob("SKILL.md")):
+        text = skill_md.read_text(encoding="utf-8")
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            if _BARE_BUNDLED_RE.search(line):
+                hits.append(f"{skill_md.relative_to(ROOT)}:{lineno}: {line.strip()}")
+
+    assert not hits, (
+        "SKILL.md files reference bundled files without ${CLAUDE_PLUGIN_ROOT}/ prefix — "
+        "these paths won't resolve at plugin runtime:\n  " + "\n  ".join(hits)
+    )

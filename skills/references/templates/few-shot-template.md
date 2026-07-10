@@ -29,7 +29,7 @@
 
 ## Validation rules
 
-Validation rules live in `skills/references/validation/`. Load on demand.
+Validation rules live in `${CLAUDE_PLUGIN_ROOT}/skills/references/validation/`. Load on demand.
 
 | Gate | File | Coverage |
 |------|------|----------|
