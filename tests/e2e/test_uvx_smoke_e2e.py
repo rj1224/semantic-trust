@@ -31,7 +31,9 @@ pytestmark = pytest.mark.skipif(not _has_uv(), reason="needs uv/uvx")
 
 
 def _latest_wheel() -> str | None:
-    ws = sorted(glob.glob(str(ROOT / "dist" / "semantic_trust-0.1.0-*.whl")))
+    # Version-agnostic: pick the newest built wheel so the smoke test exercises
+    # the CURRENT build, not a stale one left in dist/.
+    ws = sorted(glob.glob(str(ROOT / "dist" / "semantic_trust-*.whl")))
     return ws[-1] if ws else None
 
 
