@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "semantic-trust",
+  "description": "Score and certify dbt Semantic Layer models.",
+  "owner": { "name": "Ravish Jain", "email": "ravishjain024@gmail.com" },
+  "plugins": [
+    {
+      "name": "semantic-trust",
+      "version": "0.1.1",
+      "description": "Score and certify dbt Semantic Layer models — trust bands, gates, and dbt-parse certification.",
+      "source": ".",
+      "author": { "name": "Ravish Jain", "email": "ravishjain024@gmail.com" }
+    }
+  ]
+}

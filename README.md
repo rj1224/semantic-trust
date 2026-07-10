@@ -8,12 +8,13 @@ Score and certify dbt Semantic Layer models. The trust/quality layer on top of a
 
 dbt-labs' agent skills author semantic models — they scaffold YAML, wire measures, and generate metric definitions. `semantic-trust` picks up where authoring stops: it **scores** and **certifies** those models before they reach production.
 
-Scoring runs four deterministic gates:
+Scoring runs five deterministic gates:
 
 - **Structural** — required fields present, types correct, no dangling references.
 - **Uniqueness** — no duplicate metric or dimension names across the project.
 - **Joinability** — join paths resolve; foreign-key references match declared entities.
 - **Ownership** — every model has an approved owner email (optionally domain-restricted).
+- **Completeness** — descriptions, labels, and metric intent fields are populated.
 
 On top of the gate results, an LLM-judgment pass evaluates description quality, naming clarity, and metric intent. The combined score maps to an **A–F trust band**. A model that clears all gates and passes LLM review earns an A; structural failures floor the score at F.
 
@@ -27,21 +28,23 @@ Certification adds a final compile check via `dbt parse`. A model that scores B 
 
 ### Claude Code plugin
 
-The plugin bundles the skills (`document-semantics`, `build-dbt-model`, `validate-semantics`) and declares the MCP server. The public repository and marketplace install via the Claude Code plugin registry are **coming in a future release (Phase 5)**. Once the repo is published, you'll install locally with:
+Add the marketplace and install the plugin:
 
 ```bash
-git clone https://github.com/rj1224/semantic-trust
-cd semantic-trust
-# Claude Code picks up .claude-plugin/plugin.json and .mcp.json automatically
-# when you open the project in a Claude Code session.
+claude plugin marketplace add rj1224/semantic-trust
+claude plugin install semantic-trust@semantic-trust
 ```
+
+The second command uses the format `<marketplace-name>@<plugin-name>`. You can also install via the `/plugin` menu inside a Claude Code session.
+
+Once installed, the MCP server starts automatically — the plugin's `.mcp.json` launches it via `uvx --from semantic-trust semantic-trust-mcp`. No manual server step is needed.
 
 ### MCP server (standalone)
 
-The plugin's `.mcp.json` launches the MCP server via `uvx`. You can also start it directly:
+If you need to run the MCP server outside of the plugin:
 
 ```bash
-uvx semantic-trust-mcp
+uvx --from semantic-trust semantic-trust-mcp
 ```
 
 This starts the `semantic-trust-mcp` stdio server, exposing three tools: `scaffold_semantic_model`, `score_semantic_model`, and `validate_semantic_model`.
@@ -50,7 +53,7 @@ This starts the `semantic-trust-mcp` stdio server, exposing three tools: `scaffo
 
 ## Quickstart
 
-Open a Claude Code session in your dbt project directory, then:
+With the plugin installed, open a Claude Code session in your dbt project directory, then:
 
 **Natural language:**
 
@@ -58,14 +61,14 @@ Open a Claude Code session in your dbt project directory, then:
 validate my semantic model
 ```
 
-Claude routes this to the `validate-semantics` skill, which compiles your project, runs all four gates, applies LLM judgment, and returns a trust report with gate results, score, trust band, and any blocking issues.
+Claude routes this to the `validate-semantics` skill, which compiles your project, runs all five gates, applies LLM judgment, and returns a trust report with gate results, score, trust band, and any blocking issues.
 
 **Slash commands:**
 
 ```
-/semantic-trust:validate    # full trust report
-/semantic-trust:document    # generate or improve semantic model descriptions
-/semantic-trust:build       # scaffold a new semantic model from a dbt model
+/semantic-trust:validate <model>    # full trust report for a specific model
+/semantic-trust:document            # generate or improve semantic model descriptions
+/semantic-trust:build               # scaffold a new semantic model from a dbt model
 ```
 
 The trust report shows gate-by-gate pass/fail, the A–F band, and a recommendation (promote / fix-and-retry / escalate).
@@ -83,7 +86,7 @@ The trust report shows gate-by-gate pass/fail, the A–F band, and a recommendat
 
 `dbt parse` is the **universal compile gate** for both versions — `semantic-trust` always runs it first. `mf validate-configs` is a legacy-only bonus pass and is skipped automatically on 1.12+ projects.
 
-The version is detected from `dbt_project.yml` at runtime; no configuration is required.
+The spec version is detected from `target/semantic_manifest.json` at runtime (the compiled output of `dbt parse`); no configuration is required.
 
 ---
 

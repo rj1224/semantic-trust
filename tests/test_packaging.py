@@ -68,6 +68,25 @@ def test_plugin_manifest_valid():
     assert m["author"]["email"] == "ravishjain024@gmail.com"
     assert m["description"]
 
+def test_marketplace_manifest_valid():
+    raw = (ROOT / ".claude-plugin" / "marketplace.json").read_text()
+    m = json.loads(raw)
+    # Top-level name
+    assert m["name"] == "semantic-trust"
+    # Exactly one plugin entry
+    assert len(m["plugins"]) == 1
+    plugin = m["plugins"][0]
+    # Plugin name and source
+    assert plugin["name"] == "semantic-trust"
+    assert plugin["source"] == "."
+    # Author identity
+    assert plugin["author"]["name"] == "Ravish Jain"
+    assert plugin["author"]["email"] == "ravishjain024@gmail.com"
+    # No stale tokens in the manifest
+    _banned = "".join(["por", "ter"])
+    assert _banned not in raw.lower()
+
+
 def test_mcp_manifest_launches_via_uvx():
     m = json.loads((ROOT / ".mcp.json").read_text())
     srv = m["mcpServers"]["semantic-trust"]
