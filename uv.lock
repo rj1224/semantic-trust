@@ -1492,7 +1492,7 @@ wheels = [
 
 [[package]]
 name = "semantic-trust"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "mcp" },
@@ -1516,7 +1516,7 @@ requires-dist = [
     { name = "dbt-metricflow", marker = "extra == 'dev'", specifier = ">=0.13,<0.14" },
     { name = "hypothesis", marker = "extra == 'ci'", specifier = ">=6.0" },
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0" },
-    { name = "mcp", specifier = ">=1.0" },
+    { name = "mcp", specifier = ">=1.0,<2" },
     { name = "pytest", marker = "extra == 'ci'", specifier = ">=8.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "pyyaml", marker = "extra == 'ci'", specifier = ">=6.0" },
