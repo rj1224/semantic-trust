@@ -6,6 +6,7 @@ compile_manifest runs `dbt parse` to produce the manifest, then build_report
 scores it. Asserts a good semantic model scores non-F and a structurally-broken
 one scores F.
 """
+
 import shutil
 import subprocess
 
@@ -19,21 +20,19 @@ def _has_dbt_1_12() -> bool:
     """Return True only when the installed dbt-core major.minor is exactly 1.12."""
     if not shutil.which("dbt"):
         return False
-    out = subprocess.run(
-        ["dbt", "--version"], capture_output=True, text=True
-    ).stdout
+    out = subprocess.run(["dbt", "--version"], capture_output=True, text=True).stdout
     # Match "installed: 1.12." to avoid "1.12" matching inside "1.11.12".
     import re
+
     return bool(re.search(r"installed:\s+1\.12\.", out))
 
 
-pytestmark = pytest.mark.skipif(
-    not _has_dbt_1_12(), reason="needs dbt-core 1.12+"
-)
+pytestmark = pytest.mark.skipif(not _has_dbt_1_12(), reason="needs dbt-core 1.12+")
 
 
 def test_good_model_scores_above_broken():
     import os
+
     _here = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     good = os.path.join(_here, "tests/fixtures/manifest_src/single_latest")
     broken = os.path.join(_here, "tests/fixtures/manifest_src/single_latest_broken")
@@ -58,13 +57,9 @@ def test_good_model_scores_above_broken():
     assert g["gates"]["structural"] is True, (
         f"Good model should pass structural gate; got gates={g['gates']}"
     )
-    assert g["band"] != "F", (
-        f"Good model should not score F; got band={g['band']}"
-    )
+    assert g["band"] != "F", f"Good model should not score F; got band={g['band']}"
 
     assert b["gates"]["structural"] is False, (
         f"Broken model should fail structural gate; got gates={b['gates']}"
     )
-    assert b["band"] == "F", (
-        f"Broken model should score F; got band={b['band']}"
-    )
+    assert b["band"] == "F", f"Broken model should score F; got band={b['band']}"

@@ -7,6 +7,7 @@ An empty approved_email_domains list means NO domain check is applied (not a fai
 Config file format (.semantic-trust.json):
     {"approved_email_domains": ["example.com", "corp.io"]}
 """
+
 import json
 import os
 

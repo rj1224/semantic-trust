@@ -8,6 +8,7 @@ NormalizedMetric instances; it does not parse raw YAML dicts.
 
 Note: filter-clause differences are NOT yet a uniqueness dimension (v2).
 """
+
 from trust.normalized import NormalizedMetric
 
 
@@ -34,11 +35,14 @@ def find_collisions(metrics: list) -> list:
         name_key = (m.name or "").lower()
         # Name collision — guard by object identity, not content equality
         if name_key in by_name and by_name[name_key] is not m:
-            cols.append({
-                "kind": "name",
-                "a": by_name[name_key].name, "b": m.name,
-                "files": [by_name[name_key].source_file, m.source_file],
-            })
+            cols.append(
+                {
+                    "kind": "name",
+                    "a": by_name[name_key].name,
+                    "b": m.name,
+                    "files": [by_name[name_key].source_file, m.source_file],
+                }
+            )
         by_name.setdefault(name_key, m)
         # Formula collision. Two metrics with an identical normalized formula are
         # NOT duplicates if they are owned by DIFFERENT models — e.g. two latest
@@ -55,10 +59,13 @@ def find_collisions(metrics: list) -> list:
                 and prior.owner_model != m.owner_model
             )
             if not both_owned_distinct:
-                cols.append({
-                    "kind": "formula",
-                    "a": prior.name, "b": m.name,
-                    "files": [prior.source_file, m.source_file],
-                })
+                cols.append(
+                    {
+                        "kind": "formula",
+                        "a": prior.name,
+                        "b": m.name,
+                        "files": [prior.source_file, m.source_file],
+                    }
+                )
         by_formula.setdefault(f, m)
     return cols

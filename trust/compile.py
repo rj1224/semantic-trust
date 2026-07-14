@@ -3,6 +3,7 @@ target/semantic_manifest.json, then the engine reads it. Version-agnostic:
 `dbt parse` works for both legacy (1.6-1.11) and latest (1.12+) specs.
 (mf validate-configs is legacy-only — dbt-metricflow pins dbt-core <1.12 — so
 dbt parse, not mf, is the universal compile gate.)"""
+
 import os
 import subprocess
 
@@ -14,8 +15,10 @@ def compile_manifest(project_dir: str, profiles_dir: str | None = None) -> dict:
         env["DBT_PROFILES_DIR"] = profiles_dir
     proc = subprocess.run(
         ["dbt", "parse"],
-        cwd=project_dir, env=env,
-        capture_output=True, text=True,
+        cwd=project_dir,
+        env=env,
+        capture_output=True,
+        text=True,
     )
     manifest_path = os.path.join(project_dir, "target", "semantic_manifest.json")
     ok = proc.returncode == 0 and os.path.exists(manifest_path)

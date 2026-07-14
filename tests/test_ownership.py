@@ -2,10 +2,12 @@
 Tests for trust.ownership.check_owner — covers the fixed placeholder regex
 and domain allowlist logic.
 """
+
 from trust.ownership import check_owner
 
 
 # ── Core spec tests (from task brief) ──────────────────────────────────────
+
 
 def test_valid_email_with_hyphen_digits_is_accepted():
     """cp-da-1@example.com must NOT be rejected as a placeholder (prior regex bug)."""
@@ -21,11 +23,14 @@ def test_none_owner_flagged():
 
 
 def test_domain_enforced_only_when_allowlist_present():
-    assert check_owner("x@other.com", []) == []                          # no allowlist → pass
-    assert any(i.rule == "owner_domain" for i in check_owner("x@other.com", ["example.com"]))
+    assert check_owner("x@other.com", []) == []  # no allowlist → pass
+    assert any(
+        i.rule == "owner_domain" for i in check_owner("x@other.com", ["example.com"])
+    )
 
 
 # ── Placeholder detection ────────────────────────────────────────────────
+
 
 def test_placeholder_owner_flagged():
     assert any(i.rule == "owner_placeholder" for i in check_owner("owner", []))
@@ -56,6 +61,7 @@ def test_non_placeholder_hyphenated_not_rejected():
 
 # ── Invalid email format ─────────────────────────────────────────────────
 
+
 def test_bare_string_not_email_flagged():
     """A non-email string (no @) that isn't a recognised placeholder -> invalid email."""
     issues = check_owner("not-an-email", [])
@@ -67,6 +73,7 @@ def test_valid_email_format_accepted():
 
 
 # ── Domain check ────────────────────────────────────────────────────────
+
 
 def test_domain_in_allowlist_accepted():
     assert check_owner("user@allowed.com", ["allowed.com"]) == []
@@ -82,6 +89,7 @@ def test_multiple_domains_in_allowlist():
 
 
 # ── Advisory issues must surface in ModelReport (regression guard) ──────────
+
 
 def test_score_model_surfaces_advisory_owner_domain_issue(tmp_path):
     """
@@ -121,7 +129,9 @@ def test_score_model_surfaces_advisory_owner_domain_issue(tmp_path):
     rep = score_model(sm, [metric], collisions=[], project_dir=str(tmp_path))
 
     # Gate must still pass (advisory-not-blocking semantics preserved)
-    assert rep.gates["ownership"] is True, "owner_domain must NOT block the ownership gate"
+    assert rep.gates["ownership"] is True, (
+        "owner_domain must NOT block the ownership gate"
+    )
 
     # Advisory issue must appear in ModelReport.issues
     assert _has_advisory(rep, "owner_domain"), (
@@ -163,7 +173,9 @@ def test_score_model_surfaces_advisory_owner_invalid_email_issue():
     )
     rep = score_model(sm, [metric], collisions=[], project_dir=".")
 
-    assert rep.gates["ownership"] is True, "owner_invalid_email must NOT block the ownership gate"
+    assert rep.gates["ownership"] is True, (
+        "owner_invalid_email must NOT block the ownership gate"
+    )
     assert any(i.rule == "owner_invalid_email" for i in rep.issues), (
         f"owner_invalid_email advisory not in ModelReport.issues; got: {[i.rule for i in rep.issues]}"
     )

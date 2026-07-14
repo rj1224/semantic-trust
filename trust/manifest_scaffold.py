@@ -14,6 +14,7 @@ The LLM fills entity roles, descriptions, and which metrics matter.
 Eliminates hallucinated column names — the most common generation failure.
 Exposed as MCP tool scaffold_semantic_model in trust/mcp_server.py.
 """
+
 import json
 import os
 
@@ -59,15 +60,15 @@ def scaffold_semantic_model(model_name: str, columns: list) -> dict:
         kind = classify(c["data_type"])
         entry = {"name": c["name"]}
         if kind == "time":
-            entry["granularity"] = "day"                 # placeholder; author confirms
+            entry["granularity"] = "day"  # placeholder; author confirms
             entry["dimension"] = {"type": "time"}
             time_dims.append(c["name"])
         elif c["name"].endswith(("_id", "_key")):
             # ID/key columns are entity candidates regardless of numeric data type
             entry["entity"] = {"type": "unknown", "name": c["name"].rsplit("_", 1)[0]}
         elif kind == "numeric":
-            metric_candidates.append(c["name"])          # -> simple metric expr; skip as dim
-            entry["_inferred"] = "measure_candidate"      # hint; strip before final YAML
+            metric_candidates.append(c["name"])  # -> simple metric expr; skip as dim
+            entry["_inferred"] = "measure_candidate"  # hint; strip before final YAML
         else:
             entry["dimension"] = {"type": "categorical"}
         out_cols.append(entry)
@@ -77,7 +78,9 @@ def scaffold_semantic_model(model_name: str, columns: list) -> dict:
         "agg_time_dimension": time_dims[0] if time_dims else None,
         "columns": out_cols,
         "_metric_candidates": metric_candidates,
-        "_note": ("skeleton from dbt manifest; set entity types (primary/foreign), "
-                  "descriptions, and simple metrics (agg/expr/label) per "
-                  "${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md before committing"),
+        "_note": (
+            "skeleton from dbt manifest; set entity types (primary/foreign), "
+            "descriptions, and simple metrics (agg/expr/label) per "
+            "${CLAUDE_PLUGIN_ROOT}/vendor/dbt-agent-skills/latest-spec.md before committing"
+        ),
     }

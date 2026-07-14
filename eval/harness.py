@@ -6,7 +6,10 @@ AD-4: This module is a CLI + integration check, not a pytest test file.
       Scorer unit coverage lives in tests/test_scorer.py.
       CI runs this via: python -m eval.harness (see .github/workflows/ci.yml).
 """
-import json, sys, os
+
+import json
+import sys
+import os
 
 # Allow running from the repo root without installing.
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -25,13 +28,15 @@ def run_golden_cases(path: str = "eval/golden_cases.json") -> list:
         band_ok = rep.get("band") == c["expected_band"]
         gates_ok = rep.get("gates") == c["expected_gates"]
         passed = band_ok and gates_ok
-        results.append({
-            "id": c["id"],
-            "spec": c.get("spec", ""),
-            "passed": passed,
-            "expected": {"band": c["expected_band"], "gates": c["expected_gates"]},
-            "actual": {"band": rep.get("band"), "gates": rep.get("gates")},
-        })
+        results.append(
+            {
+                "id": c["id"],
+                "spec": c.get("spec", ""),
+                "passed": passed,
+                "expected": {"band": c["expected_band"], "gates": c["expected_gates"]},
+                "actual": {"band": rep.get("band"), "gates": rep.get("gates")},
+            }
+        )
     return results
 
 

@@ -8,6 +8,7 @@ Two levels:
 Band cutoffs: A≥90 / B≥80 / C≥70 / D≥55 / F (engine values; supersedes v5 spec bands).
 All issues carry provenance="deterministic" — no LLM involvement at this layer.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -17,11 +18,12 @@ from typing import Optional
 @dataclass
 class Issue:
     """A single finding from a deterministic check."""
-    severity: str          # "critical" | "warning" | "info"
-    dimension: str         # e.g. "structural", "completeness", "uniqueness"
-    rule: str              # machine-readable rule identifier
-    message: str           # human-readable message
-    location: str          # source_file or "<model>" etc.
+
+    severity: str  # "critical" | "warning" | "info"
+    dimension: str  # e.g. "structural", "completeness", "uniqueness"
+    rule: str  # machine-readable rule identifier
+    message: str  # human-readable message
+    location: str  # source_file or "<model>" etc.
     provenance: str = "deterministic"
 
     def to_dict(self) -> dict:
@@ -48,6 +50,7 @@ class DocumentReport:
     document_quality: advisory LLM quality score (0-100); None until apply_judgment() attaches it.
                       Separate from the deterministic score — never blended into trust_score.
     """
+
     doc_type: str
     status: str
     score: Optional[float]
@@ -85,6 +88,7 @@ class ModelReport:
     compile_ok:         placeholder for future compile-gate; always True at this layer
     model:              the NormalizedModel that was scored
     """
+
     model: object
     compile_ok: bool
     gates: dict[str, bool]
@@ -99,7 +103,9 @@ class ModelReport:
 
     def to_dict(self) -> dict:
         return {
-            "model": self.model.name if hasattr(self.model, "name") else str(self.model),
+            "model": self.model.name
+            if hasattr(self.model, "name")
+            else str(self.model),
             "compile_ok": self.compile_ok,
             "gates": self.gates,
             "trust_score": self.trust_score,

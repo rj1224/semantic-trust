@@ -1,4 +1,5 @@
 """Tests for trust.spec_detect — version gate + fixture-based spec detection."""
+
 from trust.spec_detect import detect_spec, dbt_supports_latest
 
 LATEST_FIXTURE = "tests/fixtures/manifests/qcommerce_latest"

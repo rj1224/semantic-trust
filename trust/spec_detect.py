@@ -1,6 +1,7 @@
 """Detect which Semantic Layer spec a project uses, and whether the dbt version
 supports the latest spec — to route the version-aware validation gate.
 Latest spec = dbt Core 1.12+ / Fusion; legacy = 1.6-1.11."""
+
 import json
 import os
 import re

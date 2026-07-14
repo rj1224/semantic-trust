@@ -9,6 +9,7 @@ declared in `.mcp.json` under mcpServers.
 
 The CLI (trust/cli.py) is retained for local dev only; skills must use these MCP tools.
 """
+
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 
@@ -17,7 +18,11 @@ from mcp.server.stdio import stdio_server
 from mcp import types as mcp_types
 
 from trust.cli import build_report, build_report_object
-from trust.manifest_scaffold import load_manifest, model_columns, scaffold_semantic_model
+from trust.manifest_scaffold import (
+    load_manifest,
+    model_columns,
+    scaffold_semantic_model,
+)
 
 try:
     _SERVER_VERSION = _pkg_version("semantic-trust")
@@ -26,6 +31,7 @@ except PackageNotFoundError:  # running from a source tree with no install metad
 
 
 # --- Handler functions (testable without a running server) ---
+
 
 def handle_score_semantic_model(project_dir: str, model: str) -> dict:
     """Score a semantic model and return the trust report."""
@@ -55,6 +61,7 @@ def handle_validate_semantic_model(
     if judgment_payload is None:
         return result.to_dict()
     from trust.judgment import apply_judgment
+
     unified = apply_judgment(result, judgment_payload)
     return unified.to_dict()
 
@@ -72,6 +79,7 @@ def handle_scaffold_semantic_model(project_dir: str, model: str) -> dict:
 
 
 # --- MCP server wiring ---
+
 
 def _make_server() -> Server:
     server = Server("semantic-trust", version=_SERVER_VERSION)
@@ -139,8 +147,8 @@ def _make_server() -> Server:
                     "Args: project_dir (str) — absolute path to dbt project root; "
                     "model (str) — semantic model name; "
                     "judgment_payload (dict, optional) — LLM judgment payload following the "
-                    "eval/judge.md Step 6 shape: {\"documents\": {\"<doc_type>\": "
-                    "{\"quality\": <0-100>, \"issues\": [...]}}}. "
+                    'eval/judge.md Step 6 shape: {"documents": {"<doc_type>": '
+                    '{"quality": <0-100>, "issues": [...]}}}. '
                     "Returns the two-level deterministic report (same shape as score_semantic_model) "
                     "when judgment_payload is omitted or None. "
                     "Returns the unified report — identical deterministic fields plus document_quality "
@@ -177,6 +185,7 @@ def _make_server() -> Server:
     @server.call_tool()
     async def call_tool(name: str, arguments: dict) -> list[mcp_types.TextContent]:
         import json as _json
+
         if name == "score_semantic_model":
             result = handle_score_semantic_model(
                 arguments["project_dir"], arguments["model"]

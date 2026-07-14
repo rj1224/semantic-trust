@@ -1,15 +1,20 @@
 # tests/test_mcp_server.py
 # Calls the tool handler functions directly — no server boot needed (AD-1 note).
-import json
 from trust.mcp_server import handle_score_semantic_model, handle_scaffold_semantic_model
-import pytest
 
 LEGACY_FIX = "tests/fixtures/manifests/qcommerce_legacy"
+
 
 def test_score_tool_returns_band_and_gates():
     result = handle_score_semantic_model(LEGACY_FIX, "orders")
     assert result["band"] in {"A", "B", "C", "D", "F"}
-    assert {"structural", "ownership", "completeness", "uniqueness", "joinability"} <= set(result["gates"].keys())
+    assert {
+        "structural",
+        "ownership",
+        "completeness",
+        "uniqueness",
+        "joinability",
+    } <= set(result["gates"].keys())
 
 
 def test_score_tool_returns_two_level_report():
@@ -37,38 +42,56 @@ def test_score_tool_is_deterministic():
 def test_score_tool_joinability_wired():
     """MCP score tool must surface joinability failures from cross-model checks."""
     from pathlib import Path
-    joinbreak = str(Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_joinbreak")
+
+    joinbreak = str(
+        Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_joinbreak"
+    )
     result = handle_score_semantic_model(joinbreak, "orders")
     assert result["gates"]["joinability"] is False
+
 
 def test_score_tool_unknown_model_returns_error():
     result = handle_score_semantic_model(LEGACY_FIX, "missing")
     assert "error" in result
 
+
 def test_scaffold_tool_returns_columns(tmp_path):
     import json as _json
-    manifest = {"nodes": {"model.shop.fct_orders": {
-        "resource_type": "model", "name": "fct_orders",
-        "columns": {
-            "order_id":   {"name": "order_id",   "data_type": "VARCHAR"},
-            "ordered_at": {"name": "ordered_at", "data_type": "TIMESTAMP"},
-            "amount":     {"name": "amount",     "data_type": "NUMERIC"},
+
+    manifest = {
+        "nodes": {
+            "model.shop.fct_orders": {
+                "resource_type": "model",
+                "name": "fct_orders",
+                "columns": {
+                    "order_id": {"name": "order_id", "data_type": "VARCHAR"},
+                    "ordered_at": {"name": "ordered_at", "data_type": "TIMESTAMP"},
+                    "amount": {"name": "amount", "data_type": "NUMERIC"},
+                },
+            }
         }
-    }}}
+    }
     (tmp_path / "target").mkdir()
     (tmp_path / "target" / "manifest.json").write_text(_json.dumps(manifest))
     result = handle_scaffold_semantic_model(str(tmp_path), "fct_orders")
     assert result["model"] == "fct_orders"
-    assert {c["name"] for c in result["columns"]} == {"order_id", "ordered_at", "amount"}
+    assert {c["name"] for c in result["columns"]} == {
+        "order_id",
+        "ordered_at",
+        "amount",
+    }
     assert result["agg_time_dimension"] == "ordered_at"
+
 
 def test_scaffold_tool_missing_manifest_returns_error(tmp_path):
     result = handle_scaffold_semantic_model(str(tmp_path), "fct_orders")
     assert "error" in result
 
+
 def test_score_tool_multi_model_attribution():
     """MCP handler must correctly attribute metrics in a multi-model project with distinct column names."""
     from pathlib import Path
+
     fix = str(Path(__file__).parent / "fixtures" / "manifests" / "multi_model_latest")
     result_orders = handle_score_semantic_model(fix, "orders")
     result_refunds = handle_score_semantic_model(fix, "refunds")
@@ -113,10 +136,13 @@ def test_validate_tool_with_payload_adds_document_quality():
             }
         }
     }
-    result = handle_validate_semantic_model(LEGACY_FIX, "orders", judgment_payload=payload)
+    result = handle_validate_semantic_model(
+        LEGACY_FIX, "orders", judgment_payload=payload
+    )
     assert result["documents"]["metrics"]["document_quality"] == 72
     llm_issues = [
-        i for i in result["documents"]["metrics"]["issues"]
+        i
+        for i in result["documents"]["metrics"]["issues"]
         if i["provenance"] == "llm_judge"
     ]
     assert len(llm_issues) == 1
@@ -132,7 +158,9 @@ def test_validate_tool_guardrail_payload_cannot_override_gates():
         "band": "F",
         "documents": {},
     }
-    result = handle_validate_semantic_model(LEGACY_FIX, "orders", judgment_payload=malicious_payload)
+    result = handle_validate_semantic_model(
+        LEGACY_FIX, "orders", judgment_payload=malicious_payload
+    )
     # Deterministic gates, trust_score, and band are identical to the det report
     assert result["gates"] == det["gates"]
     assert result["trust_score"] == det["trust_score"]
@@ -144,5 +172,7 @@ def test_validate_tool_guardrail_payload_cannot_override_gates():
 def test_validate_tool_none_payload_is_same_as_no_payload():
     """Passing judgment_payload=None is identical to omitting it."""
     no_payload = handle_validate_semantic_model(LEGACY_FIX, "orders")
-    explicit_none = handle_validate_semantic_model(LEGACY_FIX, "orders", judgment_payload=None)
+    explicit_none = handle_validate_semantic_model(
+        LEGACY_FIX, "orders", judgment_payload=None
+    )
     assert no_payload == explicit_none

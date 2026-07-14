@@ -44,7 +44,9 @@ def test_no_wrong_latest_grammar_in_templates():
         txt = open(f).read()
         if LATEST_WRONG.search(txt):
             offenders.append(f)
-    assert offenders == [], f"wrong latest-grammar token 'semantic_type:' in {offenders}"
+    assert offenders == [], (
+        f"wrong latest-grammar token 'semantic_type:' in {offenders}"
+    )
 
 
 def test_no_legacy_only_tokens_in_latest_yaml_blocks():
@@ -72,7 +74,9 @@ def test_no_legacy_only_tokens_in_latest_yaml_blocks():
 
 
 def test_templates_reference_vendored_spec():
-    joined = "".join(open(f).read() for f in glob.glob("skills/references/templates/*.md"))
+    joined = "".join(
+        open(f).read() for f in glob.glob("skills/references/templates/*.md")
+    )
     assert "vendor/dbt-agent-skills/latest-spec.md" in joined
 
 
