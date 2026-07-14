@@ -47,7 +47,9 @@ def test_wheel_excludes_tests_and_eval():
     assert wheel, "no wheel built after uv build"
 
     names = zipfile.ZipFile(wheel).namelist()
-    assert any(n.startswith("trust/") for n in names), f"trust/ missing from wheel {wheel}"
+    assert any(n.startswith("trust/") for n in names), (
+        f"trust/ missing from wheel {wheel}"
+    )
     bad = [n for n in names if n.startswith("tests/") or n.startswith("eval/")]
     assert not bad, f"wheel contains test/eval artifacts: {bad}"
 

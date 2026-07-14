@@ -10,6 +10,7 @@ Weights and band cutoffs are named constants — linked to spec §7
 
 Band cutoffs: A≥90 / B≥80 / C≥70 / D≥55 / F (engine values; supersedes v5 spec bands).
 """
+
 from trust.normalized import NormalizedModel, NormalizedMetric
 from trust.report import Issue, DocumentReport, ModelReport
 from trust.ownership import check_owner
@@ -49,12 +50,27 @@ def _score_semantic_model_doc(sm: NormalizedModel) -> DocumentReport:
     location = sm.source_file
 
     checks = [
-        (bool(sm.entities), "structural", "entities_present",
-         "semantic model must define at least one entity", "critical"),
-        (bool(sm.dimensions), "structural", "dimensions_present",
-         "semantic model must define at least one dimension", "critical"),
-        (sm.has_time_dimension, "structural", "time_dimension_present",
-         "semantic model must include a primary time dimension", "critical"),
+        (
+            bool(sm.entities),
+            "structural",
+            "entities_present",
+            "semantic model must define at least one entity",
+            "critical",
+        ),
+        (
+            bool(sm.dimensions),
+            "structural",
+            "dimensions_present",
+            "semantic model must define at least one dimension",
+            "critical",
+        ),
+        (
+            sm.has_time_dimension,
+            "structural",
+            "time_dimension_present",
+            "semantic model must include a primary time dimension",
+            "critical",
+        ),
     ]
 
     pts = 0
@@ -62,13 +78,15 @@ def _score_semantic_model_doc(sm: NormalizedModel) -> DocumentReport:
         if passed:
             pts += 1
         else:
-            issues.append(Issue(
-                severity=severity,
-                dimension=dimension,
-                rule=rule,
-                message=message,
-                location=location,
-            ))
+            issues.append(
+                Issue(
+                    severity=severity,
+                    dimension=dimension,
+                    rule=rule,
+                    message=message,
+                    location=location,
+                )
+            )
 
     mechanical = round(100.0 * pts / len(checks), 1)
     status = "pass" if not issues else "fail"
@@ -109,52 +127,60 @@ def _score_metrics_doc(metrics: list[NormalizedMetric]) -> DocumentReport:
         if m.description:
             pts += 1
         else:
-            issues.append(Issue(
-                severity="warning",
-                dimension="completeness",
-                rule="metric_description_missing",
-                message=f"metric '{m.name}' has no description",
-                location=location,
-            ))
+            issues.append(
+                Issue(
+                    severity="warning",
+                    dimension="completeness",
+                    rule="metric_description_missing",
+                    message=f"metric '{m.name}' has no description",
+                    location=location,
+                )
+            )
 
         # Known type
         total += 1
         if m.type in KNOWN_METRIC_TYPES:
             pts += 1
         else:
-            issues.append(Issue(
-                severity="warning",
-                dimension="completeness",
-                rule="metric_type_unknown",
-                message=f"metric '{m.name}' has unknown type '{m.type}'",
-                location=location,
-            ))
+            issues.append(
+                Issue(
+                    severity="warning",
+                    dimension="completeness",
+                    rule="metric_type_unknown",
+                    message=f"metric '{m.name}' has unknown type '{m.type}'",
+                    location=location,
+                )
+            )
 
         # Definition non-empty
         total += 1
         if m.definition_norm:
             pts += 1
         else:
-            issues.append(Issue(
-                severity="critical",
-                dimension="completeness",
-                rule="metric_definition_empty",
-                message=f"metric '{m.name}' has an empty or missing definition",
-                location=location,
-            ))
+            issues.append(
+                Issue(
+                    severity="critical",
+                    dimension="completeness",
+                    rule="metric_definition_empty",
+                    message=f"metric '{m.name}' has an empty or missing definition",
+                    location=location,
+                )
+            )
 
         # Ownership
         total += 1
         if m.owner:
             pts += 1
         else:
-            issues.append(Issue(
-                severity="warning",
-                dimension="ownership",
-                rule="metric_owner_missing",
-                message=f"metric '{m.name}' missing config.meta.owner",
-                location=location,
-            ))
+            issues.append(
+                Issue(
+                    severity="warning",
+                    dimension="ownership",
+                    rule="metric_owner_missing",
+                    message=f"metric '{m.name}' missing config.meta.owner",
+                    location=location,
+                )
+            )
 
     mechanical = round(100.0 * pts / total, 1)
     status = "pass" if not issues else "fail"
@@ -228,52 +254,66 @@ def score_model(
     joinability = not any(i.location == sm.source_file for i in _j_issues)
 
     if not structural:
-        model_issues.append(Issue(
-            severity="critical",
-            dimension="structural",
-            rule="structural_gate_failed",
-            message="semantic model needs entities and a primary time dimension",
-            location=location,
-        ))
+        model_issues.append(
+            Issue(
+                severity="critical",
+                dimension="structural",
+                rule="structural_gate_failed",
+                message="semantic model needs entities and a primary time dimension",
+                location=location,
+            )
+        )
     if not ownership:
-        model_issues.append(Issue(
-            severity="critical",
-            dimension="ownership",
-            rule="ownership_gate_failed",
-            message="every metric needs config.meta.owner",
-            location=location,
-        ))
+        model_issues.append(
+            Issue(
+                severity="critical",
+                dimension="ownership",
+                rule="ownership_gate_failed",
+                message="every metric needs config.meta.owner",
+                location=location,
+            )
+        )
     if not completeness:
-        model_issues.append(Issue(
-            severity="warning",
-            dimension="completeness",
-            rule="completeness_gate_failed",
-            message="metrics need descriptions; model needs dimensions",
-            location=location,
-        ))
+        model_issues.append(
+            Issue(
+                severity="warning",
+                dimension="completeness",
+                rule="completeness_gate_failed",
+                message="metrics need descriptions; model needs dimensions",
+                location=location,
+            )
+        )
     if not uniqueness:
-        model_issues.append(Issue(
-            severity="critical",
-            dimension="uniqueness",
-            rule="uniqueness_gate_failed",
-            message="duplicate metric name/formula detected in project",
-            location=location,
-        ))
+        model_issues.append(
+            Issue(
+                severity="critical",
+                dimension="uniqueness",
+                rule="uniqueness_gate_failed",
+                message="duplicate metric name/formula detected in project",
+                location=location,
+            )
+        )
     if joinability_issues is not None and not joinability:
         model_issues.extend(_j_issues)
 
     # Append advisory ownership issues (owner_invalid_email, owner_domain) that were
     # NOT gate-blocking. These are surfaced to callers but do not affect the band.
-    _advisory_issues = [i for i in _all_owner_issues if i.rule not in _GATE_BLOCKING_RULES]
+    _advisory_issues = [
+        i for i in _all_owner_issues if i.rule not in _GATE_BLOCKING_RULES
+    ]
     model_issues.extend(_advisory_issues)
 
     # --- Sub-scores ---
     # Context: structural richness of the semantic model
     ctx_pts, ctx_total = 0, 0
-    ctx_total += 1; ctx_pts += 1 if sm.entities else 0
-    ctx_total += 1; ctx_pts += 1 if sm.dimensions else 0
-    ctx_total += 1; ctx_pts += 1 if sm.has_time_dimension else 0
-    ctx_total += 1; ctx_pts += 1 if all(m.description for m in metrics) else 0
+    ctx_total += 1
+    ctx_pts += 1 if sm.entities else 0
+    ctx_total += 1
+    ctx_pts += 1 if sm.dimensions else 0
+    ctx_total += 1
+    ctx_pts += 1 if sm.has_time_dimension else 0
+    ctx_total += 1
+    ctx_pts += 1 if all(m.description for m in metrics) else 0
     context = 100.0 * ctx_pts / ctx_total if ctx_total else 0.0
 
     # Quality: metric definition well-formedness

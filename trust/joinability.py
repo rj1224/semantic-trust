@@ -24,6 +24,7 @@ MetricFlow has no built-in cross-model name-parity check.  We implement it:
   3. When a stem maps to more than one distinct entity name, the names
      are mismatched join-partner candidates — flag joinability_parity.
 """
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -32,7 +33,7 @@ from typing import TYPE_CHECKING
 from trust.report import Issue
 
 if TYPE_CHECKING:
-    from trust.normalized import NormalizedModel
+    pass
 
 # Types that represent "one end" of a join (primary key side).
 _PRIMARY_TYPES = {"primary", "natural"}
@@ -62,7 +63,7 @@ def _orphan_issues(models: list) -> list[Issue]:
     entity_to_models: dict[str, set[str]] = defaultdict(set)
 
     for model in models:
-        for e in (model.entities or []):
+        for e in model.entities or []:
             name = e.get("name", "")
             if not name:
                 continue
@@ -78,7 +79,7 @@ def _orphan_issues(models: list) -> list[Issue]:
 
     # Second pass — emit one Issue per (entity_name, model) pair that is orphaned.
     for model in models:
-        for e in (model.entities or []):
+        for e in model.entities or []:
             name = e.get("name", "")
             if not name:
                 continue
@@ -116,7 +117,7 @@ def _parity_issues(models: list) -> list[Issue]:
     stem_map: dict[str, list[dict]] = defaultdict(list)
 
     for model in models:
-        for e in (model.entities or []):
+        for e in model.entities or []:
             name = e.get("name", "")
             etype = e.get("type", "")
             if not name or etype not in _JOIN_TYPES:

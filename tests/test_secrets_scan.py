@@ -43,9 +43,7 @@ def test_clean_string_is_not_flagged(tmp_path: Path) -> None:
 
 def test_secrets_ok_pragma_suppresses_hit(tmp_path: Path) -> None:
     """A line bearing the ``# secrets-ok`` pragma must not be flagged."""
-    (tmp_path / "fixture.py").write_text(
-        'key = "AKIAIOSFODNN7EXAMPLE"  # secrets-ok\n'
-    )
+    (tmp_path / "fixture.py").write_text('key = "AKIAIOSFODNN7EXAMPLE"  # secrets-ok\n')
     hits = scan(tmp_path)
     assert not hits, f"secrets-ok pragma should suppress hit, got: {hits}"
 
@@ -57,6 +55,4 @@ def test_repo_itself_is_clean() -> None:
         capture_output=True,
         text=True,
     )
-    assert result.returncode == 0, (
-        f"Secrets scan found hits in repo:\n{result.stderr}"
-    )
+    assert result.returncode == 0, f"Secrets scan found hits in repo:\n{result.stderr}"

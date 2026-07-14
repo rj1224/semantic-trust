@@ -1,4 +1,5 @@
 """Smoke test: assert new Makefile targets and workflow file exist."""
+
 import pathlib
 
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent
@@ -22,7 +23,7 @@ def test_vendor_check_target_defined():
 
 def test_new_targets_in_phony():
     text = _makefile_text()
-    phony_line = next(l for l in text.splitlines() if l.startswith(".PHONY:"))
+    phony_line = next(line for line in text.splitlines() if line.startswith(".PHONY:"))
     for target in ("ci-hermetic", "ci-dbt12", "vendor-check"):
         assert target in phony_line, f"{target} missing from .PHONY"
 
@@ -35,7 +36,7 @@ def test_quality_targets_defined():
 
 def test_quality_targets_in_phony():
     text = _makefile_text()
-    phony_line = next(l for l in text.splitlines() if l.startswith(".PHONY:"))
+    phony_line = next(line for line in text.splitlines() if line.startswith(".PHONY:"))
     for target in ("lint", "typecheck"):
         assert target in phony_line, f"{target} missing from .PHONY"
 

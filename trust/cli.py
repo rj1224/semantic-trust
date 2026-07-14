@@ -4,7 +4,9 @@ skills consume the MCP server (trust/mcp_server.py, AD-1).
 
 Retained for: manual spot-checks during development, smoke tests, Task 3 wiring smoke.
 """
-import json, sys
+
+import json
+import sys
 from trust.manifest_loader import load_models, load_metrics
 from trust.uniqueness import find_collisions
 from trust.joinability import check_joinability
@@ -76,7 +78,6 @@ def build_report_object(project_dir: str, model_name: str):
     validate_semantic_model handler (object).  Back-compat: build_report's dict
     contract is preserved by calling .to_dict() on the result.
     """
-    from trust.report import ModelReport  # avoid circular at module level
     models = load_models(project_dir)
     sm = next((m for m in models if m.name == model_name), None)
     if sm is None:
@@ -88,7 +89,9 @@ def build_report_object(project_dir: str, model_name: str):
     all_j_issues = check_joinability(models)
     model_j_issues = [i for i in all_j_issues if i.location == sm.source_file]
     rep = score_model(
-        sm, model_metrics, collisions,
+        sm,
+        model_metrics,
+        collisions,
         joinability_issues=model_j_issues,
         project_dir=project_dir,
     )

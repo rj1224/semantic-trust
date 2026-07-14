@@ -11,7 +11,13 @@ def test_build_report_returns_band_and_gates():
     rep = build_report(LEGACY_FIX, "orders")
     assert rep["model"] == "orders"
     assert rep["band"] in {"A", "B", "C", "D", "F"}
-    assert {"structural", "ownership", "completeness", "uniqueness", "joinability"} <= set(rep["gates"].keys())
+    assert {
+        "structural",
+        "ownership",
+        "completeness",
+        "uniqueness",
+        "joinability",
+    } <= set(rep["gates"].keys())
 
 
 def test_build_report_unknown_model_returns_error():
@@ -60,24 +66,32 @@ def test_orphan_name_collision_surfaces_warning():
         }
     ]
     warnings = _orphan_collision_warnings(all_metrics, collisions)
-    assert any(
-        "blended_rate" in w and "name collision" in w for w in warnings
-    ), f"expected a name-collision warning for blended_rate, got: {warnings}"
+    assert any("blended_rate" in w and "name collision" in w for w in warnings), (
+        f"expected a name-collision warning for blended_rate, got: {warnings}"
+    )
 
 
 def test_build_report_is_two_level_and_deterministic():
-    LATEST_FIX = str(Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_latest")
+    LATEST_FIX = str(
+        Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_latest"
+    )
     a = build_report(LATEST_FIX, "orders")
     b = build_report(LATEST_FIX, "orders")
-    assert a == b                                   # reproducible
-    assert "documents" in a and "trust_score" in a and a["band"] in {"A", "B", "C", "D", "F"}
+    assert a == b  # reproducible
+    assert (
+        "documents" in a
+        and "trust_score" in a
+        and a["band"] in {"A", "B", "C", "D", "F"}
+    )
 
 
 def test_build_report_joinability_sees_all_models():
     """build_report must pass ALL models in the project to the joinability gate,
     not just the target model (so cross-model join checks are meaningful).
     The joinbreak fixture has a parity mismatch — gate must fail, not pass silently."""
-    JOINBREAK_FIX = str(Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_joinbreak")
+    JOINBREAK_FIX = str(
+        Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_joinbreak"
+    )
     rep = build_report(JOINBREAK_FIX, "orders")
     assert "joinability" in rep["gates"]
     # Joinability MUST fail — orders has a parity mismatch with payments
@@ -90,7 +104,10 @@ def test_build_report_joinability_sees_all_models():
 def test_build_report_two_level_mcp_shape():
     """MCP handler must return the same two-level dict as build_report."""
     from trust.mcp_server import handle_score_semantic_model
-    LATEST_FIX = str(Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_latest")
+
+    LATEST_FIX = str(
+        Path(__file__).parent / "fixtures" / "manifests" / "qcommerce_latest"
+    )
     rep = handle_score_semantic_model(LATEST_FIX, "orders")
     assert "documents" in rep and "trust_score" in rep
     assert rep["band"] in {"A", "B", "C", "D", "F"}

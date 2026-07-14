@@ -16,6 +16,7 @@ Proof chain:
 6. Assert parse SUCCEEDS and compiled semantic_manifest.json contains the
    semantic model AND the metric.
 """
+
 import json
 import os
 import pathlib
@@ -34,25 +35,24 @@ from trust.compile import compile_manifest
 # Version guard — reuse exact pattern from test_compile_score_e2e.py
 # ---------------------------------------------------------------------------
 
+
 def _has_dbt_1_12() -> bool:
     """Return True only when the installed dbt-core major.minor is exactly 1.12."""
     if not shutil.which("dbt"):
         return False
-    out = subprocess.run(
-        ["dbt", "--version"], capture_output=True, text=True
-    ).stdout
+    out = subprocess.run(["dbt", "--version"], capture_output=True, text=True).stdout
     import re
+
     return bool(re.search(r"installed:\s+1\.12\.", out))
 
 
-pytestmark = pytest.mark.skipif(
-    not _has_dbt_1_12(), reason="needs dbt-core 1.12+"
-)
+pytestmark = pytest.mark.skipif(not _has_dbt_1_12(), reason="needs dbt-core 1.12+")
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _build_tiny_project(root: str) -> None:
     """Write a minimal dbt+duckdb project under root (no semantic layer yet).
@@ -68,7 +68,7 @@ def _build_tiny_project(root: str) -> None:
 
     (proj / "dbt_project.yml").write_text(
         "name: scaffold_rt\nversion: '1.0.0'\nconfig-version: 2\n"
-        "profile: scaffold_rt\nmodel-paths: [\"models\"]\n"
+        'profile: scaffold_rt\nmodel-paths: ["models"]\n'
     )
     (proj / "profiles.yml").write_text(
         "scaffold_rt:\n  target: dev\n"
@@ -139,13 +139,15 @@ def _render_scaffold_to_yaml(scaffold: dict, metric_name: str = "total_amount") 
     metrics_yaml = []
     candidates = scaffold.get("_metric_candidates", [])
     if candidates:
-        metrics_yaml.append({
-            "name": metric_name,
-            "type": "simple",
-            "label": "Total Amount",
-            "agg": "sum",
-            "expr": candidates[0],
-        })
+        metrics_yaml.append(
+            {
+                "name": metric_name,
+                "type": "simple",
+                "label": "Total Amount",
+                "agg": "sum",
+                "expr": candidates[0],
+            }
+        )
 
     model_entry: dict = {
         "name": scaffold["model"],
@@ -156,12 +158,15 @@ def _render_scaffold_to_yaml(scaffold: dict, metric_name: str = "total_amount") 
     if metrics_yaml:
         model_entry["metrics"] = metrics_yaml
 
-    return yaml.dump({"models": [model_entry]}, default_flow_style=False, sort_keys=False)
+    return yaml.dump(
+        {"models": [model_entry]}, default_flow_style=False, sort_keys=False
+    )
 
 
 # ---------------------------------------------------------------------------
 # Test
 # ---------------------------------------------------------------------------
+
 
 def test_scaffold_roundtrip():
     """scaffold_semantic_model output round-trips through real dbt parse."""
@@ -222,7 +227,9 @@ def test_scaffold_roundtrip():
 
         # 8. Verify semantic_manifest.json contains the semantic model and metric
         sm_path = os.path.join(project_dir, "target", "semantic_manifest.json")
-        assert os.path.exists(sm_path), "semantic_manifest.json not produced by dbt parse"
+        assert os.path.exists(sm_path), (
+            "semantic_manifest.json not produced by dbt parse"
+        )
         with open(sm_path) as fh:
             semantic_manifest = json.load(fh)
 

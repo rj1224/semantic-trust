@@ -17,6 +17,7 @@ Two distinct scores stay distinct:
   - trust_score / band  : deterministic (unchanged)
   - document_quality    : advisory, per DocumentReport (from judgment)
 """
+
 from __future__ import annotations
 
 import copy
@@ -90,13 +91,15 @@ def apply_judgment(report: ModelReport, judgment: dict[str, Any]) -> ModelReport
 
         # Append llm_judge advisory issues (tagged provenance="llm_judge")
         for raw in payload.get("issues", []):
-            doc.issues.append(Issue(
-                severity=raw.get("severity", "info"),
-                dimension=raw.get("dimension", ""),
-                rule=raw.get("rule", ""),
-                message=raw.get("message", ""),
-                location=raw.get("location", ""),
-                provenance="llm_judge",
-            ))
+            doc.issues.append(
+                Issue(
+                    severity=raw.get("severity", "info"),
+                    dimension=raw.get("dimension", ""),
+                    rule=raw.get("rule", ""),
+                    message=raw.get("message", ""),
+                    location=raw.get("location", ""),
+                    provenance="llm_judge",
+                )
+            )
 
     return new_report

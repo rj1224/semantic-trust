@@ -1,8 +1,8 @@
 """
 Tests for trust.config.load_config — safe defaults and JSON parsing.
 """
+
 import json
-import os
 from trust.config import load_config
 
 
@@ -15,7 +15,9 @@ def test_missing_config_safe_default(tmp_path):
 def test_config_with_domains_loaded(tmp_path):
     """Valid JSON with approved_email_domains → list returned correctly."""
     config_file = tmp_path / ".semantic-trust.json"
-    config_file.write_text(json.dumps({"approved_email_domains": ["example.com", "corp.io"]}))
+    config_file.write_text(
+        json.dumps({"approved_email_domains": ["example.com", "corp.io"]})
+    )
     cfg = load_config(str(tmp_path))
     assert cfg["approved_email_domains"] == ["example.com", "corp.io"]
 
