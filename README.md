@@ -1,6 +1,6 @@
 # semantic-trust
 
-Score and certify dbt Semantic Layer models. The trust/quality layer on top of authoring.
+Certify that dbt Semantic Layer models are safe to promote — a deterministic trust score, LLM-judged quality, and a `dbt parse` compile check. Not another way to write YAML.
 
 ---
 
@@ -21,6 +21,24 @@ On top of the gate results, an LLM-judgment pass evaluates description quality, 
 Certification adds a final compile check via `dbt parse`. A model that scores B or above and compiles cleanly is marked **certified** and safe to promote.
 
 `semantic-trust` works on top of any dbt project — it reads the compiled `semantic_manifest.json` that `dbt parse` emits and requires no changes to your dbt project structure.
+
+---
+
+## How it's different
+
+**vs `mf validate-configs`** — MetricFlow's own validator pins `dbt-core<1.12`, so it
+structurally cannot validate the current (1.12+/Fusion) Semantic Layer spec. semantic-trust
+validates **both** the legacy and the current spec — today it is the only tool that checks
+1.12+/Fusion semantic models at all.
+
+**vs dbt-project-evaluator / dbt-checkpoint** — those lint your dbt *project* structure
+(naming, staging layers, tests-exist, docs-exist). semantic-trust certifies your *Semantic
+Layer* — metrics, entities, joinability, ownership, and description quality. Different object,
+different failure mode: complementary, not redundant.
+
+**vs dbt Fusion / `dbt parse` alone** — the compiler tells you a model is *valid*.
+semantic-trust tells you it is *trustworthy* — the deterministic gates plus an LLM-judgment
+pass on description quality, naming clarity, and metric intent that no compiler performs.
 
 ---
 
@@ -66,10 +84,12 @@ Claude routes this to the `validate-semantics` skill, which compiles your projec
 **Slash commands:**
 
 ```
-/semantic-trust:validate <model>    # full trust report for a specific model
-/semantic-trust:document            # generate or improve semantic model descriptions
-/semantic-trust:build               # scaffold a new semantic model from a dbt model
+/semantic-trust:validate <model>    # PRIMARY — full trust report for a specific model
+/semantic-trust:document            # scaffolding helper — draft/improve descriptions
+/semantic-trust:build               # scaffolding helper — bootstrap a model from a dbt model
 ```
+
+> For production authoring, prefer dbt-labs' own Semantic Layer agent skills — the `document` / `build` helpers here are for quickly bootstrapping a first model to validate.
 
 The trust report shows gate-by-gate pass/fail, the A–F band, and a recommendation (promote / fix-and-retry / escalate).
 
