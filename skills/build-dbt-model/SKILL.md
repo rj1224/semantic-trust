@@ -1,13 +1,11 @@
 ---
 name: build-dbt-model
 description: >
-  Use when the user wants to turn a SQL query into a dbt model with full
-  semantic-layer documentation. Triggers: "build a model", "create a dbt model from SQL",
-  "convert this query to dbt", "create a fact/dim/mart from this query",
-  "I have a query I want to productionize", "scaffold a dbt model",
-  "turn this SQL into a proper model". Handles classification, naming,
-  model authoring, manifest scaffolding, semantics generation, validation,
-  and trust scoring.
+  Bootstrap helper — use ONLY to scaffold a first dbt model + semantic definition from a raw
+  SQL query when none exists yet, as a ramp into validation. Not the primary entry point: for
+  scoring/certifying existing models use validate-semantics, and for production authoring
+  prefer dbt-labs' own Semantic Layer agent skills. Triggers: "bootstrap a new dbt model from
+  this SQL so I can validate it".
 version: 1.0.0
 ---
 

@@ -81,15 +81,13 @@ validate my semantic model
 
 Claude routes this to the `validate-semantics` skill, which compiles your project, runs all five gates, applies LLM judgment, and returns a trust report with gate results, score, trust band, and any blocking issues.
 
-**Slash commands:**
+**Slash command:**
 
 ```
-/semantic-trust:validate <model>    # PRIMARY — full trust report for a specific model
-/semantic-trust:document            # scaffolding helper — draft/improve descriptions
-/semantic-trust:build               # scaffolding helper — bootstrap a model from a dbt model
+/semantic-trust:validate <model>    # full trust report for a specific model
 ```
 
-> For production authoring, prefer dbt-labs' own Semantic Layer agent skills — the `document` / `build` helpers here are for quickly bootstrapping a first model to validate.
+> Authoring is available via natural language — the `document-semantics` and `build-dbt-model` skills bootstrap a first-pass semantic model for a model that has none yet, as a ramp into validation. For production authoring, prefer dbt-labs' own Semantic Layer agent skills.
 
 The trust report shows gate-by-gate pass/fail, the A–F band, and a recommendation (promote / fix-and-retry / escalate).
 
