@@ -9,12 +9,20 @@ declared in `.mcp.json` under mcpServers.
 
 The CLI (trust/cli.py) is retained for local dev only; skills must use these MCP tools.
 """
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
+
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp import types as mcp_types
 
 from trust.cli import build_report, build_report_object
 from trust.manifest_scaffold import load_manifest, model_columns, scaffold_semantic_model
+
+try:
+    _SERVER_VERSION = _pkg_version("semantic-trust")
+except PackageNotFoundError:  # running from a source tree with no install metadata
+    _SERVER_VERSION = "0+unknown"
 
 
 # --- Handler functions (testable without a running server) ---
@@ -66,7 +74,7 @@ def handle_scaffold_semantic_model(project_dir: str, model: str) -> dict:
 # --- MCP server wiring ---
 
 def _make_server() -> Server:
-    server = Server("semantic-trust")
+    server = Server("semantic-trust", version=_SERVER_VERSION)
 
     @server.list_tools()
     async def list_tools() -> list[mcp_types.Tool]:

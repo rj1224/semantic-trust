@@ -98,7 +98,7 @@ def _definition_norm(metric: dict, agg: str, expr: str) -> str:
     tp = metric.get("type_params") or {}
     mtype = metric.get("type", "") or ""
     if mtype == "simple":
-        canon = {"type": "simple", "agg": agg or "", "expr": expr or ""}
+        canon: dict[str, object] = {"type": "simple", "agg": agg or "", "expr": expr or ""}
     elif mtype == "ratio":
         canon = {"type": "ratio",
                  "numerator": _ref_name(tp.get("numerator")),

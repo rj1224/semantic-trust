@@ -27,7 +27,9 @@ def find_collisions(metrics: list) -> list:
     Self-collision: a metric is never compared against itself (by object identity).
     Two distinct entries with the same name in the same file ARE a name collision.
     """
-    cols, by_name, by_formula = [], {}, {}
+    cols: list[dict] = []
+    by_name: dict[str, NormalizedMetric] = {}
+    by_formula: dict[str, NormalizedMetric] = {}
     for m in metrics:
         name_key = (m.name or "").lower()
         # Name collision — guard by object identity, not content equality

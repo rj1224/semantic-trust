@@ -27,6 +27,19 @@ def test_new_targets_in_phony():
         assert target in phony_line, f"{target} missing from .PHONY"
 
 
+def test_quality_targets_defined():
+    text = _makefile_text()
+    assert "lint:" in text
+    assert "typecheck:" in text
+
+
+def test_quality_targets_in_phony():
+    text = _makefile_text()
+    phony_line = next(l for l in text.splitlines() if l.startswith(".PHONY:"))
+    for target in ("lint", "typecheck"):
+        assert target in phony_line, f"{target} missing from .PHONY"
+
+
 def test_ci_workflow_file_exists():
     workflow = PROJECT_ROOT / ".github" / "workflows" / "ci.yml"
     assert workflow.exists(), "ci.yml workflow file not found"
