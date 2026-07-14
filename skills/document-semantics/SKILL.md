@@ -1,10 +1,11 @@
 ---
 name: document-semantics
 description: >
-  Use when the user wants to generate or improve dbt semantic-layer documentation for an
-  existing model. Triggers: "document this model", "generate dbt docs", "create semantic
-  model", "write metrics YAML", "add few-shot examples", "improve documentation",
-  "score my docs", "document my model", "I have metrics ready for this model".
+  Bootstrap helper — use ONLY to draft a first-pass semantic model for a dbt model that has
+  none yet, as a ramp into validation. Not the primary entry point: for scoring/certifying
+  existing models use validate-semantics, and for production authoring prefer dbt-labs' own
+  Semantic Layer agent skills. Triggers: "bootstrap semantic docs for a model with none yet",
+  "start a first semantic model so I can validate it".
 version: 1.0.0
 ---
 

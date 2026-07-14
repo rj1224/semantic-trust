@@ -100,9 +100,10 @@ def test_mcp_manifest_launches_via_uvx():
 # Slash command tests (Task 3)
 # ---------------------------------------------------------------------------
 
+# validate is the only first-class slash command. document/build were demoted from the
+# command surface (decision D2, 2026-07-13): the skills stay in-repo but no longer ship as
+# /semantic-trust:document / :build. See test_demoted_authoring_commands_absent + preserved.
 COMMANDS = {
-    "document": "document-semantics",
-    "build": "build-dbt-model",
     "validate": "validate-semantics",
 }
 
@@ -111,6 +112,25 @@ def test_command_files_exist_and_reference_skill():
     for cmd, skill in COMMANDS.items():
         txt = (ROOT / "commands" / f"{cmd}.md").read_text()
         assert skill in txt, f"commands/{cmd}.md must invoke the {skill} skill"
+
+
+def test_demoted_authoring_commands_absent():
+    """document/build were demoted from the slash-command surface (D2). Guard against
+    accidental re-introduction as first-class commands."""
+    for cmd in ("document", "build"):
+        assert not (ROOT / "commands" / f"{cmd}.md").exists(), (
+            f"commands/{cmd}.md should not exist — authoring is demoted to a skill-only "
+            f"bootstrap helper (D2 2026-07-13)"
+        )
+
+
+def test_authoring_skills_preserved():
+    """D2 keeps the authoring skills in-repo (founder's originals) even though their slash
+    commands are removed. Guard against accidental deletion."""
+    for skill in ("document-semantics", "build-dbt-model"):
+        assert (ROOT / "skills" / skill / "SKILL.md").exists(), (
+            f"skills/{skill}/SKILL.md must be preserved (D2 2026-07-13)"
+        )
 
 
 # ---------------------------------------------------------------------------
