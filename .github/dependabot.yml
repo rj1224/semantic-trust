@@ -9,7 +9,8 @@ updates:
     commit-message:
       prefix: "deps"
 
-  # GitHub Actions — keeps the SHA pins current (bumps the pinned commit + the # vX comment)
+  # GitHub Actions — patch/minor + security updates keep the SHA pins current.
+  # Major bumps are taken deliberately (read the changelog), not auto-proposed.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -17,3 +18,6 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "ci"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
