@@ -4,6 +4,27 @@ All notable changes to `semantic-trust` will be documented in this file.
 
 ---
 
+## 0.1.2 — 2026-07-15
+
+Positioning + hardening release. Validation is now the product's hero; authoring is preserved as a bootstrap helper.
+
+### Changed
+
+- **`validate-semantics` is the primary command.** Removed the `/semantic-trust:document` and `/semantic-trust:build` slash commands. The `document-semantics` and `build-dbt-model` skills remain in the repo, reframed as bootstrap helpers for cold-starting a first semantic model — for production authoring, prefer dbt-labs' own Semantic Layer agent skills.
+- **README differentiation** — leads with the `mf validate-configs` structural gap (semantic-trust is currently the only tool that validates the dbt 1.12+/Fusion spec) and distinguishes semantic-trust from `dbt-project-evaluator` and `dbt-checkpoint`.
+
+### Fixed
+
+- **MCP `serverInfo.version`** now reports the installed package version instead of the `mcp` SDK version.
+- Three `mypy` type errors in the trust engine.
+
+### Internal
+
+- **Quality gates** — `ruff` (lint + format) and `mypy` added to CI; Python 3.11 added to the CI matrix.
+- **Security hardening** — all GitHub Actions SHA-pinned; least-privilege workflow permissions; Dependabot (uv + github-actions), CodeQL SAST, and `SECURITY.md` added.
+
+---
+
 ## 0.1.1 — 2026-07-11
 
 Launch-blocker fixes applied after initial PyPI release.
