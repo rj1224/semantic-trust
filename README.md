@@ -2,6 +2,11 @@
 
 Certify that dbt Semantic Layer models are safe to promote — a deterministic trust score, LLM-judged quality, and a `dbt parse` compile check. Not another way to write YAML.
 
+[![PyPI](https://img.shields.io/pypi/v/semantic-trust.svg)](https://pypi.org/project/semantic-trust/)
+[![CI](https://github.com/rj1224/semantic-trust/actions/workflows/ci.yml/badge.svg)](https://github.com/rj1224/semantic-trust/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/pypi/pyversions/semantic-trust.svg)](https://pypi.org/project/semantic-trust/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ---
 
 ## Why
@@ -21,6 +26,23 @@ On top of the gate results, an LLM-judgment pass evaluates description quality, 
 Certification adds a final compile check via `dbt parse`. A model that scores B or above and compiles cleanly is marked **certified** and safe to promote.
 
 `semantic-trust` works on top of any dbt project — it reads the compiled `semantic_manifest.json` that `dbt parse` emits and requires no changes to your dbt project structure.
+
+---
+
+## How it works
+
+```mermaid
+flowchart TD
+    A["dbt project"] -->|"dbt parse"| B["target/semantic_manifest.json"]
+    B --> C["semantic-trust engine"]
+    C --> D["Deterministic gates<br/>structural · uniqueness · joinability<br/>ownership · completeness"]
+    C --> E["LLM-judgment pass<br/>description · naming · intent<br/>advisory — cannot override gates"]
+    D --> F["Trust report<br/>A–F band + dbt-parse certification"]
+    E --> F
+    F --> G["MCP server · CLI · Claude Code plugin · CI gate"]
+```
+
+The engine reads the **compiled** manifest (never raw YAML), so the same logic works on the legacy and the 1.12+/Fusion spec alike. The LLM-judgment pass is **advisory** — it can flag quality issues but can never override a deterministic gate or the trust band (enforced server-side).
 
 ---
 
