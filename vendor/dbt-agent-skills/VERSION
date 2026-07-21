@@ -1,7 +1,7 @@
 upstream: https://github.com/dbt-labs/dbt-agent-skills
 skill: skills/dbt/skills/building-dbt-semantic-layer
-commit: 6cd21ea97bd81decf5eb5b48b54bccea8d8fcbc2
-retrieved: 2026-07-15
+commit: f8d7828e5cb51016143d0a4e2b5116ca711a44c6
+retrieved: 2026-07-20
 license: Apache-2.0
 files: latest-spec.md legacy-spec.md time-spine.md best-practices.md
 sync: bump commit + re-copy; see Phase 3.5-C sync routine
