@@ -13,7 +13,7 @@ ci-hermetic:
 	uv run python -m eval.harness
 	uv run python scripts/check_secrets.py .
 ci-dbt12:
-	PYTHONPATH=. uv run --no-project --with 'dbt-core==1.12.0b3' --with dbt-duckdb --with pytest --prerelease=allow -- pytest tests/e2e -v
+	PYTHONPATH=. uv run --no-project --with 'dbt-core==1.12.0' --with dbt-duckdb --with pytest --prerelease=allow -- pytest tests/e2e -v
 vendor-check:
 	bash scripts/check_vendor_updates.sh
 lint:
