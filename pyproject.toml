@@ -5,7 +5,7 @@ description = "Score and certify dbt Semantic Layer models — trust bands, gate
 authors = [{ name = "Ravish Jain", email = "ravishjain024@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["mcp>=1.0,<2"]    # engine reads the compiled dbt manifest (JSON); MCP = the server SDK
+dependencies = ["mcp>=1.0,<3"]    # engine reads the compiled dbt manifest (JSON); MCP = the server SDK
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Intended Audience :: Developers",
