@@ -30,7 +30,7 @@ semantic-trust = "trust.cli:main_cli"
 # ci: fast CI — pytest + hypothesis + pyyaml (e2e tests render YAML). No dbt tree.
 ci = ["pytest>=8.0", "hypothesis>=6.0", "pyyaml>=6.0", "ruff>=0.6", "mypy>=1.11"]
 # dev adds the dbt-metricflow bundle for `mf validate-configs` (legacy-only) + latest-spec checks.
-dev = ["pytest>=8.0", "hypothesis>=6.0", "pyyaml>=6.0", "dbt-metricflow>=0.13,<0.14", "ruff>=0.6", "mypy>=1.11"]
+dev = ["pytest>=8.0", "hypothesis>=6.0", "pyyaml>=6.0", "dbt-metricflow>=0.13,<0.15", "ruff>=0.6", "mypy>=1.11"]
 
 [build-system]
 requires = ["setuptools>=68"]
